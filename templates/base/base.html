@@ -1,0 +1,174 @@
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+<!DOCTYPE html>
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+
+ <head>
+  <title>{{title}}</title>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" /> 
+
+  <!-- Set the viewport for mobile optimization -->
+  <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+
+  <link rel="stylesheet" href="/html/css/foundation.css" />
+  <link rel="stylesheet" href="/html/css/foundicons/general_foundicons.css">
+  <link rel="stylesheet" href="/html/css/foundicons/general_enclosed_foundicons.css">
+  <link rel="stylesheet" href="/html/css/foundicons/accessibility_foundicons.css">
+  <!--[if IE 7]>
+  <link rel="stylesheet" href="/html/css/foundicons/general_foundicons_ie7.css">
+  <link rel="stylesheet" href="/html/css/foundicons/general_enclosed_foundicons_ie7.css">
+  <link rel="stylesheet" href="/html/css/foundicons/accessibility_foundicons_ie7.css">
+  <![endif]-->
+
+  <link rel="stylesheet" href="/html/css/normalize.css" />
+  <link rel="stylesheet" href="/html/css/smoothness/jquery-ui-1.10.3.custom.min.css"  />
+  <link rel="stylesheet" media="screen" href="/html/css/responsive-tables.css" />
+  <link rel="stylesheet" href="/html/css/jqueryui-editable.css">
+  <link rel="stylesheet" href="/html/css/app.css">
+  <link rel="stylesheet" href="/html/css/ssd.css">
+
+  <script type="text/javascript" src="/html/js/vendor/custom.modernizr.js"></script>
+  <script type="text/javascript" src="/html/js/jquery-1.8.2.js"></script>
+  <script type="text/javascript" src="/html/js/jquery-ui-1.10.3.custom.min.js"></script>
+  <script type="text/javascript" src="/html/js/ssd.js"></script>
+  <script type="text/javascript" src="/html/js/responsive-tables.js"></script>
+  <script type="text/javascript" src="/html/js/jquery-ui-timepicker-addon.js"></script>
+  <script type="text/javascript" src="/html/js/jqueryui-editable.min.js"></script>
+
+ </head>
+ <body>
+
+<div class="contain-to-grid">
+  <nav class="top-bar">
+
+    <ul class="title-area">
+      <li class="name">
+        <h1><a href="/"><span style="color: #005596;">Status</span>Dashboard</a></h1>
+        </span>
+      </li>
+      <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+    </ul>
+    <section class="top-bar-section">
+      <!-- Left Nav Section -->
+      <ul class="left">
+        <li class="divider"></li>
+        <li><a href="/search/events">Search Events</a></li>
+
+        {% if ireport %}   
+        <li class="divider"></li>   
+        <li><a href="/ireport">Report Incident</a></li>
+        {% endif %}
+
+        {% if escalation %}
+        <li class="divider"></li>        
+        <li><a href="/escalation">Escalation</a></li>
+        {% endif %}
+
+        {% if admin_link %}
+        <li class="divider">
+        <li><a href="/admin">Admin</a></li>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        <li class="divider">
+        <li><a href="/accounts/logout">Logout ({{user.username}})</a></li>
+        {% endif %}
+      </ul>
+    </section>
+   </nav>
+</div>
+
+
+{% if logo %}
+<div class="row">
+  <div class="large-12 columns">
+    <img src="{{logo}}"><br>
+  </div>
+</div>
+{% endif %}
+    
+<div class="row">
+  <div class="large-12 columns">    
+    <hr class="header_break"><br>
+  </div>
+</div>
+
+<div class="row show-for-small">
+  <div class="large-12 columns">    
+    <br>
+  </div>
+</div>
+      
+{# Source the content from the template #}
+{% block content %}{% endblock %}
+
+<div class="row">
+  <div class="large-12 columns">
+    <br><br><br><br>
+  </div>
+</div>
+
+<div id="sticky_footer">
+  <div class="row">
+    <div class="large-6 columns">
+      <span class="footer">Timezone: {{TIME_ZONE}}</span>
+      <div class="spacer_micro"></div>
+      <form id="timezone_form" action="/prefs/set_timezone" method="post">
+       {% csrf_token %}
+         <select name="tz_pref" id="tz_pref" onchange='this.form.submit()'>
+           <option disabled selected>-- Change Timezone --</option>
+         {% for timezone in timezones %}
+           <option value="{{timezone}}">{{timezone}}</option>
+         {% endfor %}
+         </select>
+      </form>
+    </div>
+    <div class="large-5 columns">
+      <span class="footer">Powered by <a href="http://www.system-status-dashboard.com" title="{{app_version}}">The System Status Dashboard</a></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.write('<script src=' +
+  ('__proto__' in {} ? '/html/js/vendor/zepto' : '/html/js/vendor/jquery') +
+  '.js><\/script>')
+  </script>
+  <script src="/html/js/foundation/foundation.js"></script>
+  <script src="/html/js/foundation/foundation.alerts.js"></script>
+  <script src="/html/js/foundation/foundation.clearing.js"></script>
+  <script src="/html/js/foundation/foundation.cookie.js"></script>
+  <script src="/html/js/foundation/foundation.dropdown.js"></script>
+  <script src="/html/js/foundation/foundation.forms.js"></script>
+  <script src="/html/js/foundation/foundation.joyride.js"></script>
+  <script src="/html/js/foundation/foundation.magellan.js"></script>
+  <script src="/html/js/foundation/foundation.orbit.js"></script>
+  <script src="/html/js/foundation/foundation.placeholder.js"></script>
+  <script src="/html/js/foundation/foundation.reveal.js"></script>
+  <script src="/html/js/foundation/foundation.section.js"></script>
+  <script src="/html/js/foundation/foundation.tooltips.js"></script>
+  <script src="/html/js/foundation/foundation.topbar.js"></script>
+  <script>
+  $(document).foundation();
+  </script>
+
+
+</body>
+</html>

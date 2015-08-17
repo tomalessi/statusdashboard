@@ -1,0 +1,117 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+<script>
+  // Set edit style to inline instead of popup
+  $.fn.editable.defaults.mode = 'inline';
+</script>
+
+<div class="row">
+  {# This is a large-3 side nav #}
+  {% include "admin/side_nav.html" %}
+
+  <div class="large-9 columns">
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>Services</h1>
+        <p>Use this page to manage the services that will be displayed on the dashboard.  Once services are added, they will be immediately available in the dashboard and events pages.  </p>
+        <hr>
+      </div>
+    </div>
+
+    {# This is row consisting of 12 columns that will display all messages passed in the request #}
+    {% include "admin/messages.html" %}
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">Current Services</span><br><br>
+        {% if services %}
+          {% for row in services %}
+          <div>
+            <span style="width: 40px; float: left;">
+              <a href="/admin/service_delete?id={{row.id}}" title="Delete service"><span class="foundicon-gen-trash foundicon_container_iconlink"></span></a>
+            </span>
+            <span>
+              <a href="#" title="Modify service" id="service_{{row.id}}">{{row.service_name}}</a>
+              <script>
+              $(document).ready(function() {
+                $('#service_{{row.id}}').editable({
+                      url: '/admin/service_modify',
+                      tpl: '<input type="text" maxlength="50">',
+                      type: 'text',
+                      pk: '{{row.id}}',
+                      name: 'service_name',
+                      inputclass: 'x_editable_text',
+                      params: { csrfmiddlewaretoken: '{{csrf_token}}'},
+                      error: function(response, newValue) {
+                        return response.responseText;
+                      }
+                  });
+              });
+              </script>
+            </span>
+            <br><br>
+          </div>
+          <div class="spacer_micro"></div>
+          {% endfor %}
+        {% else %}
+          <b>No services defined</b>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="spacer_medium"></div>
+
+    <div class="row">
+      <div class="large-12 columns {% if form.service.errors %}error{% endif %}">
+        <span class="radius secondary label">Add Service</span><br>
+        <div class="sublabel_container"><span class="sublabel">Any services added here will immediately be shown on the dashboard.</span></div>
+      </div>
+    </div>
+
+<form method="POST" action="/admin/services">
+{% csrf_token %}
+
+    <div class="row">
+      <div class="large-8 columns {% if form.service.errors %}error{% endif %}">
+        <input name="service" type="text" maxlength="50" placeholder="Enter a service name" value="{% if form.service.data %}{{form.service.data}}{% endif %}">
+        {% if form.service.errors %}
+        <span class="err">{% for error in form.service.errors %}{{error}}<br>{% endfor %}<br></span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="spacer_small"></div>
+
+    <div class="row">
+      <div class="large-11 columns">
+        <input type="submit" class="small button secondary" value="Save"/>
+      </div>
+    </div>
+
+</form>
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,95 @@
+
+{# This is the side navigation pane that accompanies all admin pages #}
+<div class="large-3 columns">
+    <div class="docs section-container accordion" data-section="accordion" data-options="one_up: false">
+
+	  <section class="section {% if nav_section == 'admin' %}active{% endif %}">
+	    <p class="title"><a href="#">Admin</a></p>
+	    <div class="content">
+	      <ul class="side-nav">
+	        <li {% if nav_sub == 'cache_status' %}class="active"{% endif %}><a href="/admin/cache_status">Cache Status</a></li>
+	        <li {% if nav_sub == 'admin_config' %}class="active"{% endif %}><a href="/admin/admin_config">Admin Configuration</a></li>
+	      </ul>
+	    </div>
+	  </section>
+
+	  <section class="section {% if nav_section == 'email' %}active{% endif %}">
+	    <p class="title"><a href="#">Email</a></p>
+	    <div class="content">
+	      <ul class="side-nav">
+	        <li {% if nav_sub == 'email_config' %}class="active"{% endif %}><a href="/admin/email_config">Email Configuration</a></li>
+	        <li {% if nav_sub == 'recipients' or nav_sub == 'recipient_delete' %}class="active"{% endif %}><a href="/admin/email_recipients">Manage Recipients</a></li>
+	      </ul>
+	    </div>
+	  </section>
+
+	  <section class="section {% if nav_section == 'escalation' %}active{% endif %}">
+	    <p class="title"><a href="#">Escalation Path</a></p>
+	    <div class="content">
+	      <ul class="side-nav">
+	        <li {% if nav_sub == 'escalation_config' %}class="active"{% endif %}><a href="/admin/escalation_config">Configuration</a></li>
+			<li {% if nav_sub == 'escalation_contacts' or nav_sub == 'contact_delete' %}class="active"{% endif %}><a href="/admin/escalation_contacts">Manage Escalation Contacts</a></li>
+	      </ul>
+	    </div>
+	  </section>
+
+	  <section class="section {% if nav_section == 'event' %}active{% endif %}">
+	    <p class="title"><a href="#">Events</a></p>
+	    <div class="content">
+	      <ul class="side-nav">
+	        <li {% if nav_sub == 'incident' %}class="active"{% endif %}><a href="/admin/incident">Create Incident</a></li>
+	        <li {% if nav_sub == 'i_list' or nav_sub == 'i_update' or nav_sub == 'i_delete' %}class="active"{% endif %}><a href="/admin/i_list">List Open Incidents</a></li>
+	        <li {% if nav_sub == 'maintenance' %}class="active"{% endif %}><a href="/admin/maintenance">Create Maintenance</a></li>
+	        <li {% if nav_sub == 'm_list' or nav_sub == 'm_update' or nav_sub == 'm_delete' %}class="active"{% endif %}><a href="/admin/m_list">List Open Maintenance</a></li>
+	      </ul>
+	    </div>
+	  </section>
+
+	  <section class="section {% if nav_section == 'ireport' %}active{% endif %}">
+	    <p class="title"><a href="#">Incident Reports</a></p>
+	    <div class="content">
+	      <ul class="side-nav">
+	        <li {% if nav_sub == 'ireport_config' %}class="active"{% endif %}><a href="/admin/ireport_config">Configuration</a></li>
+			<li {% if nav_sub == 'ireport_list' or nav_sub == 'ireport_delete' or nav_sub == 'ireport_detail' %}class="active"{% endif %}><a href="/admin/ireport_list">List Incident Reports</a></li>
+	      </ul>
+	    </div>
+	  </section>
+
+	  <section class="section {% if nav_section == 'logo' %}active{% endif %}">
+	    <p class="title"><a href="#">Logo</a></p>
+	    <div class="content">
+	      <ul class="side-nav">
+	        <li {% if nav_sub == 'logo_config' %}class="active"{% endif %}><a href="/admin/logo_config">Logo Configuration</a></li>
+	      </ul>
+	    </div>
+	  </section>
+
+	  <section class="section {% if nav_section == 'services' %}active{% endif %}">
+	    <p class="title"><a href="#">Services</a></p>
+	    <div class="content">
+	      <ul class="side-nav">
+	        <li {% if nav_sub == 'services' or nav_sub == 'service_delete' %}class="active"{% endif %}><a href="/admin/services">Manage Services</a></li>
+	      </ul>
+	    </div>
+	  </section>
+
+	  <section class="section {% if nav_section == 'messages' %}active{% endif %}">
+	    <p class="title"><a href="#">System Messages</a></p>
+	    <div class="content">
+	      <ul class="side-nav">
+	        <li {% if nav_sub == 'messages_config' %}class="active"{% endif %}><a href="/admin/messages_config">Messages Configuration</a></li>
+	      </ul>
+	    </div>
+	  </section>
+
+	  <section class="section {% if nav_section == 'systemurl' %}active{% endif %}">
+	    <p class="title"><a href="#">System Url</a></p>
+	    <div class="content">
+	      <ul class="side-nav">
+	        <li {% if nav_sub == 'systemurl_config' %}class="active"{% endif %}><a href="/admin/systemurl_config">Url Configuration</a></li>
+	      </ul>
+	    </div>
+	  </section>
+
+	</div>
+</div>

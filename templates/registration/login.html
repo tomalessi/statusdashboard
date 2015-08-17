@@ -1,0 +1,87 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% load url from future %}
+
+{% block content %}
+
+<div class="login_window">
+
+<div class="row">
+  <div class="large-12 columns">
+    <h1>Administrator Login</h1>
+    <p>Please enter your username/password.</p>
+  </div>
+</div>
+
+<div class="spacer_small"></div>
+
+<form method="post" action="{% url 'django.contrib.auth.views.login' %}?next={{next}}">
+{% csrf_token %}
+<div class="row">
+  <div class="large-10 columns {% if form.password.errors %}error{% endif %}">
+		<label>{{form.username.label_tag}}<span>{{form.username }}</span></label>
+   	{% if form.username.errors %}
+    <span class="err">
+      {% for error in form.username.errors %}{{error}}{% endfor %}<br><br>
+    </span>
+    {% endif %}
+	</div>
+</div>
+
+<div class="row">
+	<div class="large-10 columns {% if form.password.errors %}error{% endif %}">
+		<label>{{form.password.label_tag}}<span>{{form.password}}</span></label>
+  	{% if form.password.errors %}
+  	<span class="err">
+    	{% for error in form.password.errors %}{{error}}{% endfor %}<br><br>
+    </span>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-3 columns">
+		<input type="submit" class="small button secondary" value="submit"/>
+  </div>
+</div>
+
+<div class="spacer_small"></div>
+
+<div class="row">
+  <div class="large-12 columns">
+		{% if form.errors %}
+		 <p class="error">Errors were encountered validating your username/password.  Please ensure both values are correct and try again.</p>
+		{% endif %}
+   </div>
+</div>
+
+</form>
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+

@@ -1,0 +1,99 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+<div class="row">
+  {# This is a large-3 side nav #}
+  {% include "admin/side_nav.html" %}
+
+  <div class="large-9 columns">
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>Open Incidents List</h1>
+        <p>Listed below are all incident events that are not in a closed state.</p>
+        <hr>
+      </div>
+    </div>
+
+    {# This is row consisting of 12 columns that will display all messages passed in the request #}
+    {% include "admin/messages.html" %}
+
+    <div class="spacer_medium"></div>
+
+    {% if incidents %}
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="navigation">
+          {% if incidents.has_previous %}
+            <a href="?page={{incidents.previous_page_number}}">&laquo;</a>
+          {% endif %}
+
+          <span>Page {{incidents.number}} of {{incidents.paginator.num_pages}}</span>
+
+          {% if incidents.has_next %}
+            <a href="?page={{incidents.next_page_number}}">&raquo;</a>
+          {% endif %}
+        </span>
+        &nbsp;&nbsp;
+        <span class="navigation">({{incidents.paginator.count}} total result{{incidents.paginator.count|pluralize}})</span>
+      </div>
+    </div>
+
+    <div class="spacer_small"></div>
+
+    {% endif %}
+
+    <div class="row">
+      <div class="large-12 columns">
+        {% if incidents %}
+        <table>
+          <tr>
+            <th width="155">Start Time</th>
+            <th>Description</th>
+            <th width="90"></th>
+          </tr>
+          {% for incident in incidents %}
+          <tr>
+            <td>{{incident.start|date:"Y-m-d H:i:s e"}}</td>
+            <td>{{incident.description}}</td>
+            <td>
+              <a href="/i_detail?id={{incident.id}}" title="More detail"><span class="foundicon-gen-page foundicon_container_iconlink"></span></a>
+              <a href="/admin/i_delete?id={{incident.id}}" title="Delete"><span class="foundicon-gen-trash foundicon_container_iconlink"></span></a>
+              <a href="/admin/i_update?id={{incident.id}}" title="Edit"><span class="foundicon-gen-edit foundicon_container_iconlink"></span></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <p>There are no open incidents.</p>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+

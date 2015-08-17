@@ -1,0 +1,616 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+{# This is row consisting of 12 columns that will display all messages passed in the request #}
+{% include "admin/messages.html" %}
+
+{% if alert %}
+<div class="row">
+  <div class="large-12 large-centered columns">
+    <div class="panel callout radius" style="background: #D45757; border-color: #D45757;">
+      {{alert}}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if information %}
+<div class="row">
+  <div class="large-12 columns">
+    <p>{{information}}</p>
+  </div>
+</div>
+{% endif %}
+
+<div class="spacer_small"></div>
+
+<div class="row">
+  <div class="large-6 columns">
+    <span class="heading">System Status as of {% now "Y-m-d H:i:s e" %}:</span><br><br>
+  </div>
+</div>
+
+{# Legend for large and medium screens #}
+<div class="row hide-for-small">
+  <div class="large-6 columns">
+    <a href="{{backward_link}}" title="Move back one week"><span class="foundicon-gen-left-arrow foundicon_container_nav"></span></a>
+    &nbsp;
+    <a href="{{forward_link}}" title="Move forward one week"><span class="foundicon-gen-right-arrow foundicon_container_nav"></span></a>
+    &nbsp;
+    <span id="calselector" title="Jump to a specific date" class="foundicon-gen-calendar foundicon_container_nav_cal"></span>
+    &nbsp;
+    <a href="#" data-dropdown="keydrop-large"><span class="foundicon-acc-key foundicon_container_nav" title="Dashboard color indicator key"></span></a>
+
+    <div id="keydrop-large" class="f-dropdown content small" data-dropdown-content>
+      <div>
+        <h5>Dashboard Key</h5>
+        <div class="spacer_small"></div>
+      </div>
+      <div>
+        <span class="legend"><span class="foundicon-genenc-checkmark foundicon_container_green"></span>&nbsp;Service Normal - the service is operating normally.</span>
+        <div class="spacer_small"></div>
+      </div>
+      <div>
+        <span class="legend"><span class="foundicon-genenc-remove foundicon_container_red"></span>&nbsp;Incident - the service is experiencing an active incident.</span>
+        <div class="spacer_small"></div>      
+      </div>
+      <div>
+        <span class="legend"><span class="foundicon-genenc-remove foundicon_container_orange"></span>&nbsp;Incident (resolved) - an incident occurred, but has been resolved.</span>
+        <div class="spacer_small"></div>
+      </div>
+      <div>
+        <span class="legend"><span class="foundicon-genenc-tools foundicon_container_blue"></span>&nbsp;Scheduled Maintenance - scheduled maintenance is occurring with the service.</span>
+      </div>
+    </div>
+
+    <form name="prefs_jump" action="/prefs/jump" method="post" style="margin: 0;">
+    {% csrf_token %}
+      <input type="text" class="jump_to" name="jump_to" id="jump_to" onchange='this.form.submit()'/>
+    </form>
+
+  </div>
+</div>
+
+<script>
+  // Interact with datepicker through foundicon icon
+  $("#calselector").click(function() {
+      $("#jump_to").datepicker('show');
+  });
+</script>
+
+{# Main dashboard for large and medium screens #}
+<div class="row hide-for-small">
+  <div class="large-12 large-centered columns">
+    <table>
+     {% for row in data %}
+       {% if forloop.counter == 1 %}
+         <tr>
+          {% for heading in row %}
+           {% if forloop.counter == 1 %}
+            <th style="width: 50px;">{{heading}}</th>
+           {% else %}
+            {% if forloop.counter == 2 %}
+              <th>{{heading}}</th>
+            {% else %}
+              <th style="width: 100px;">{{heading|date:"Y-m-d"}}<br>{{heading|date:"D"}}</th>
+            {% endif %}
+           {% endif %}
+          {% endfor %}
+         </tr>
+       {% else %}
+        <tr>
+         {% for column in row %}
+           {# Set the status colors next to the service and print the service #}
+           {# 1 is active incident and 2 is active maintenance #}
+           {% if forloop.counter == 1 %}
+             <td style="text-align: center;">
+               {% if column.status == 1 %}
+                 <span class="foundicon-genenc-remove foundicon_container_red" title="An incident has occurred with this service."></span>
+               {% else %}
+                {% if column.status == 2 %}
+                 <span class="foundicon-genenc-tools foundicon_container_blue" title="Maintenance is currently occurring with this service."></span>
+                {% else %}
+                  <span class="foundicon-genenc-checkmark foundicon_container_green" title="Service is operating normally."></span>
+                {% endif %}
+               {% endif %}
+              </td>
+              <td>
+                <span>{{column.service}}</span>
+              </td>
+           {% else %}
+             {# Check each date #}
+             <td>
+             {% for event in column %}
+               {% if not event == 'green' %}
+                {# We have some events to show #}
+                {# See if we have a maintenance or an incident #}
+                {% if event.type == 'incident' %}
+                   {% if event.status == 'open' %}
+                    <a href="#" data-dropdown="idrop_{{event.id}}">
+                      <span class="foundicon-genenc-remove foundicon_container_red" title="Incident (ID:{{event.id}}) {{event.open|date:"Y-m-d H:i:s e"}} ~"></span>
+                    </a>
+                    <div id="idrop_{{event.id}}" class="f-dropdown content small" data-dropdown-content>
+                      <span class="dashboard_drop">
+                        <h5>Incident Description</h5>
+                        {{event.description}}
+                        <br><br>
+                        <a href="/i_detail?id={{event.id}}" title="More information">Full Details</a>
+                      </span>
+                    </div>
+                   {% else %}
+                    <a href="#" data-dropdown="irdrop_{{event.id}}">
+                      <span class="foundicon-genenc-remove foundicon_container_orange" title="Resolved Incident (ID:{{event.id}}) {{event.open|date:"Y-m-d H:i:s e"}} ~ {{event.closed|date:"Y-m-d H:i:s e"}}"></span>
+                    </a>
+                    <div id="irdrop_{{event.id}}" class="f-dropdown content small" data-dropdown-content>
+                      <span class="dashboard_drop">
+                        <h5>Incident (Resolved) Description</h5>
+                        {{event.description}}
+                        <br><br>
+                        <a href="/i_detail?id={{event.id}}" title="More information">Full Details</span></a>
+                      </span>
+                    </div>
+                   {% endif %}
+                {% else %}
+                  {% if event.type == 'maintenance' %}
+                    <a href="#" data-dropdown="mdrop_{{event.id}}">
+                      <span class="foundicon-genenc-tools foundicon_container_blue" title="Scheduled Maintenance (ID:{{event.id}}) {{event.open|date:"Y-m-d H:i:s e"}} ~ {{event.closed|date:"Y-m-d H:i:s e"}}"></span>
+                    </a>
+                    <div id="mdrop_{{event.id}}" class="f-dropdown content small" data-dropdown-content>
+                      <span class="dashboard_drop">
+                        <h5>Maintenance Description</h5>
+                        {{event.description}}
+                        <br><br>
+                        <a href="/m_detail?id={{event.id}}" title="More information">Full Details</a>
+                      </span>
+                    </div>
+                  {% endif %}
+                {% endif %}
+               {% endif %}
+             {% endfor %}
+             </td>
+           {% endif %} 
+         {% endfor %}
+        </tr>
+       {% endif %}
+     {% endfor %}
+    </table>
+  </div>
+</div>
+
+{# Legend for small screens #}
+<div class="row show-for-small">
+  <div class="large-6 columns">
+    <a href="#" data-dropdown="keydrop-small"><span class="foundicon-acc-key foundicon_container_nav" title="Dashboard color indicator key"></span></a>
+
+    <div id="keydrop-small" class="f-dropdown content tiny" data-dropdown-content>
+      <div>
+        <h5>Dashboard Key</h5>
+        <div class="spacer_small"></div>
+      </div>
+      <div>
+        <span class="legend"><span class="foundicon-genenc-checkmark foundicon_container_green"></span>&nbsp;Service Normal - the service is operating normally.</span>
+        <div class="spacer_small"></div>
+      </div>
+      <div>
+        <span class="legend"><span class="foundicon-genenc-remove foundicon_container_red"></span>&nbsp;Incident - the service is experiencing an active disruption.</span>
+        <div class="spacer_small"></div>      
+      </div>
+      <div>
+        <span class="legend"><span class="foundicon-genenc-tools foundicon_container_blue"></span>&nbsp;Scheduled Maintenance - scheduled maintenance is occurring with the service.</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{# Main dashboard for small screens #}
+<div class="row show-for-small">
+  <div class="large-12 large-centered columns">
+    <table>
+     {% for row in data %}
+       {% if forloop.counter == 1 %}
+         <tr>
+           <th style="width: 50px;"></th>
+           <th style="width: 220px;">Service</th>
+           <th>Current Status</th>
+         </tr>
+       {% else %}
+        <tr>
+         {% for column in row %}
+           {# Set the status colors next to the service and print the service #}
+           {# 1 is active incident and 2 is active maintenance #}
+           {% if forloop.counter == 1 %}
+             <td style="text-align: center;">
+               {% if column.status == 1 %}
+                 <span class="foundicon-genenc-remove foundicon_container_red" title="An incident is currently occurring with this service."></span>
+               {% else %}
+                {% if column.status == 2 %}
+                 <span class="foundicon-genenc-tools foundicon_container_blue" title="Maintenance is currently occurring with this service."></span>
+                {% else %}
+                  <span class="foundicon-genenc-checkmark foundicon_container_green" title="Service is operating normally."></span>
+                {% endif %}
+               {% endif %}
+              </td>
+              <td>
+                <span>{{column.service}}</span>
+              </td>
+              <td>
+               {% if column.status == 1 %}
+                 <span class="mobile_red">Active Incident</span>
+               {% else %}
+                {% if column.status == 2 %}
+                 <span class="mobile_blue">Scheduled maintenance</span>
+                {% else %}
+                 <span class="mobile_green">Service normal</span>
+                {% endif %}
+               {% endif %}
+              </td>
+           {% endif %}
+          {% endfor %}
+        </tr>
+       {% endif %}
+     {% endfor %}
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <br><br>
+    <span class="heading">Active Incident Timeline:</span>
+    <a href="#" data-dropdown="incident_timeline_drop"><span class="foundicon-acc-key foundicon_container_nav_tl" title="Summary Status Key"></a>
+    <div id="incident_timeline_drop" class="f-dropdown content small" data-dropdown-content>
+      <h5>Active Incident Timeline</h5><br>
+      <span class="help_drop">
+        The active incident timeline displays all active incidents, categorized by the services they impact.  Expand any incident to view a full description of the incident as well as any updates.
+      </span>
+    </div>
+
+    <div class="spacer_micro"></div>
+    {% if timeline.events.incident %}
+      <div class="timeline_container">
+      {% for id,values in timeline.events.incident.items %}
+        <div>
+
+          <div>
+            <span id="expand_{{id}}" title="View the sequence of events for this event" class="foundicon-genenc-plus foundicon_container_expand"></span>
+            <span class="timeline">
+              ID: {{id}}
+              {% for service in values.services %}
+               {% if forloop.last %}
+                {{service.event_service__service__service_name}}
+               {% else %}
+                {{service.event_service__service__service_name}},
+               {% endif %}
+              {% endfor %}
+            </span>
+          </div>
+         
+          <div id="event_{{id}}" style="display: none;">
+
+            <div style="padding: 15px 15px 15px 25px;">
+              <span class="timeline">
+                <a href="/i_detail?id={{id}}" title="View all available information about this event">Full Details</a>
+              </span>
+            </div>
+
+            <div style="padding: 0px 15px 15px 25px;">
+              <span class="timeline">
+                <b>{{values.start|date:"Y-m-d H:i:s e"}}</b> - {{values.description}}
+              </span>
+            </div>
+
+            {% if values.updates %}
+            {% for update in values.updates %}
+            <div style="padding: 0px 15px 15px 25px;">
+              <span class="timeline">
+                <b>{{update.0|date:"Y-m-d H:i:s e"}}</b> - {{update.1}}
+              </span>
+            </div>
+            {% endfor %}
+            {% endif %}          
+          
+          </div>
+
+          <script>
+           // Expand Slider
+            $(function() {
+              $("#expand_{{id}}").click(function () {
+                 $("#event_{{id}}").slideToggle("fast");
+                 if ($(this).hasClass("foundicon-genenc-plus")) {
+                  //Remove the plus class and add the minus one
+                  $(this).removeClass("foundicon-genenc-plus");
+                  $(this).addClass("foundicon-genenc-minus");
+                 } else if ($(this).hasClass("foundicon-genenc-minus")) {
+                  // Remove the minus class and add the plus one
+                  $(this).removeClass("foundicon-genenc-minus");
+                  $(this).addClass("foundicon-genenc-plus");
+                 }
+              });
+            });
+          </script>
+          
+        </div>
+       <br>
+      {% endfor %}
+      </div>
+    {% else %}
+      <div class="hr"></div>
+      <span class="all_good">No current incidents.</span>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <br><br>
+    <span class="heading">Active Maintenance Timeline:</span>
+    <a href="#" data-dropdown="maintenance_timeline_drop"><span class="foundicon-acc-key foundicon_container_nav_tl" title="Summary Status Key"></a>
+    <div id="maintenance_timeline_drop" class="f-dropdown content small" data-dropdown-content>
+      <h5>Active Maintenance Timeline</h5><br>
+      <span class="help_drop">
+        The active maintenance timeline displays all active scheduled system maintenance activities, categorized by the services they impact.  Expand any maintenance event to view a full description of the maintenance as well as any updates.
+      </span>
+    </div>
+
+    {% if timeline.events.maintenance %}
+      <div class="timeline_container">
+      {% for id,values in timeline.events.maintenance.items %}
+        <div>
+
+          <div style="vertical-align: top;">
+            <span id="expand_{{id}}" class="foundicon-genenc-plus foundicon_container_expand"></span>
+            <span class="timeline">
+              ID: {{id}}
+              {% for service in values.services %}
+               {% if forloop.last %}
+                {{service.event_service__service__service_name}}
+               {% else %}
+                {{service.event_service__service__service_name}},
+               {% endif %}
+              {% endfor %}
+            </span>
+          </div>
+         
+          <div id="event_{{id}}" style="display: none;">
+
+            <div style="padding: 15px 15px 15px 25px;">
+              <span class="timeline">
+                <a href="/i_detail?id={{id}}">Full Details</a>
+              </span>
+            </div>
+
+            <div style="padding: 0px 15px 15px 25px;">
+              <span class="timeline">
+                <b>{{values.start|date:"Y-m-d H:i:s e"}}</b> - {{values.description}}
+              </span>
+            </div>
+
+            {% if values.updates %}
+            {% for update in values.updates %}
+            <div style="padding: 0px 15px 15px 25px;">
+              <span class="timeline">
+                <b>{{update.0|date:"Y-m-d H:i:s e"}}</b> - {{update.1}}
+              </span>
+            </div>
+            {% endfor %}
+            {% endif %}          
+          
+          </div>
+
+          <script>
+           // Expand Slider
+            $(function() {
+              $("#expand_{{id}}").click(function () {
+                 $("#event_{{id}}").slideToggle("fast");
+                 if ($(this).hasClass("foundicon-genenc-plus")) {
+                  //Remove the plus class and add the minus one
+                  $(this).removeClass("foundicon-genenc-plus");
+                  $(this).addClass("foundicon-genenc-minus");
+                 } else if ($(this).hasClass("foundicon-genenc-minus")) {
+                  // Remove the minus class and add the plus one
+                  $(this).removeClass("foundicon-genenc-minus");
+                  $(this).addClass("foundicon-genenc-plus");
+                 }
+              });
+            });
+          </script>
+          
+        </div>
+       <br>
+      {% endfor %}
+      </div>
+    {% else %}
+      <div class="hr"></div>
+      <span class="all_good">No scheduled maintenance is occurring.</span>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <br><br><br>
+    <span class="heading">Summary Status:</span>
+    &nbsp;
+    <a href="{{backward_link}}" title="Move the reference date back one week"><span class="foundicon-gen-left-arrow foundicon_container_nav_tl"></span></a>
+    &nbsp;
+    <a href="{{forward_link}}" title="Move the reference date forward one week"><span class="foundicon-gen-right-arrow foundicon_container_nav_tl"></span></a>
+    &nbsp;
+    <a href="#" data-dropdown="histsumdrop"><span class="foundicon-acc-key foundicon_container_nav_tl" title="Summary Status Key"></a>
+    <div id="histsumdrop" class="f-dropdown content small" data-dropdown-content>
+      <h5>Historical Summary Status</h5><br>
+      <span class="help_drop">
+        Historical summary status shows the past 15 days (incidents and maintenance) and future 15 days (scheduled maintenance).<br><br>Click on any of the event indicators to review detailed information about events.<br><br>Remove a data series from the graph by clicking its legend icon.
+      </span>
+    </div>
+    <div class="spacer_micro"></div>
+  </div>
+</div>
+
+{% if show_graph %}
+<script type="text/javascript">
+$(function () {
+        
+        $('#graph').highcharts({
+            credits: {
+              enabled: false
+            },
+            chart: {
+                type: 'spline',
+                marginRight: 25,
+                marginBottom: 75,
+                height: 250,
+                /* width: 900, */
+                /* backgroundColor: '#f9f9f9', */
+                borderColor: '#cccccc',
+                borderWidth: 1
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        enabled: true
+                    }
+                }
+            },
+            title: {
+                text: 'Ref Date: {{ref|date:"Y-m-d"}}',
+                align: 'left',
+                style: {
+                  color: '#616161',
+                  fontSize: '10px',
+
+                }
+            },
+            xAxis: {
+                categories: [{% for row in count_data %}{% if forloop.last %}'{{row.date}}'{% else %}'{{row.date}}',{% endif %}{% endfor %}],
+                labels: {
+                    rotation: 290,
+                    x: -5,
+                    y: 35,
+                    step: 2
+                },
+            },
+            yAxis: {
+                title: {
+                    text: 'Event Counts'
+                },
+                allowDecimals: false,
+                gridLineColor: '#eeeeee'
+                //min: 0
+            },
+            legend: {
+                enabled: true,
+                verticalAlign: 'top',
+                align: 'right',
+                x: -25
+            },
+            series: [{
+                name: 'Incidents',
+                data: [
+     
+                  {% for row in count_data %}
+                    {% if forloop.last %}
+                    {
+                      y: {{row.incident}},
+                      events: {
+                        click: function() {
+                          window.open('/search/graph?date={{row.date}}&type=incident', '_self');
+                        }
+                      }
+                    }
+                    {% else %}
+                    {  
+                      y: {{row.incident}},
+                      events: {
+                        click: function() {
+                          window.open('/search/graph?date={{row.date}}&type=incident', '_self');
+                        }
+                      }
+                    },
+                    {% endif %}
+                  {% endfor %}
+                
+                ],
+                color: '#FDBE08'
+            }, {
+                name: 'Maintenance',
+                data: [
+
+                  {% for row in count_data %}
+                    {% if forloop.last %}
+                    {
+                      y: {{row.maintenance}},
+                      events: {
+                        click: function() {
+                          window.open('/search/graph?date={{row.date}}&type=maintenance', '_self');
+                        }
+                      }
+                    }
+                    {% else %}
+                    {  
+                      y: {{row.maintenance}},
+                      events: {
+                        click: function() {
+                          window.open('/search/graph?date={{row.date}}&type=maintenance', '_self');
+                        }
+                      }
+                    },
+                    {% endif %}
+                  {% endfor %}
+
+                ],
+                color: '#4F84D1'
+            }]
+        });
+});
+</script>
+<script type="text/javascript" src="/html/js/highcharts.js"></script>
+
+<div class="row">
+  <div class="large-12 columns">
+    <div id="graph" style="width:100%; margin: 0 auto"></div>
+    <br><br>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="large-12 columns">
+    <div class="hr"></div>
+    <span class="all_good">No incidents or maintenance have occurred in the past 15 days and no maintenance is planned for the next 15 days (relative to {{ref|date:"Y-m-d"}}).</span><br><br>
+  </div>
+</div>
+{% endif %}
+
+<div class="spacer_large"></div>
+
+
+<script type="text/javascript">
+
+   // Jump To
+   $(function() {
+      $("#jump_to").datepicker({dateFormat: 'yy-mm-dd'});
+   });
+
+</script>
+
+{% endblock %}

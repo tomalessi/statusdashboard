@@ -1,0 +1,132 @@
+/* font-face */
+@font-face {
+  font-family: "AccessibilityFoundicons";
+  src: url("/html/css/foundicons/fonts/accessibility_foundicons.eot");
+  src: url("/html/css/foundicons/fonts/accessibility_foundicons.eot?#iefix") format("embedded-opentype"), url("/html/css/foundicons/fonts/accessibility_foundicons.woff") format("woff"), url("/html/css/foundicons/fonts/accessibility_foundicons.ttf") format("truetype"), url("/html/css/foundicons/fonts/accessibility_foundicons.svg#AccessibilityFoundicons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* global foundicon styles */
+[class*="foundicon-acc-"] {
+  display: inline;
+  width: auto;
+  height: auto;
+  line-height: inherit;
+  vertical-align: baseline;
+  background-image: none;
+  background-position: 0 0;
+  background-repeat: repeat;
+}
+
+[class*="foundicon-acc-"]:before {
+  font-family: "AccessibilityFoundicons";
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+}
+
+/* icons */
+.foundicon-acc-wheelchair:before {
+  content: "\f000";
+}
+
+.foundicon-acc-speaker:before {
+  content: "\f001";
+}
+
+.foundicon-acc-fontsize:before {
+  content: "\f002";
+}
+
+.foundicon-acc-eject:before {
+  content: "\f003";
+}
+
+.foundicon-acc-view-mode:before {
+  content: "\f004";
+}
+
+.foundicon-acc-eyeball:before {
+  content: "\f005";
+}
+
+.foundicon-acc-asl:before {
+  content: "\f006";
+}
+
+.foundicon-acc-person:before {
+  content: "\f007";
+}
+
+.foundicon-acc-question:before {
+  content: "\f008";
+}
+
+.foundicon-acc-adult:before {
+  content: "\f009";
+}
+
+.foundicon-acc-child:before {
+  content: "\f00a";
+}
+
+.foundicon-acc-glasses:before {
+  content: "\f00b";
+}
+
+.foundicon-acc-cc:before {
+  content: "\f00c";
+}
+
+.foundicon-acc-blind:before {
+  content: "\f00d";
+}
+
+.foundicon-acc-braille:before {
+  content: "\f00e";
+}
+
+.foundicon-acc-iphone-home:before {
+  content: "\f00f";
+}
+
+.foundicon-acc-w3c:before {
+  content: "\f010";
+}
+
+.foundicon-acc-css:before {
+  content: "\f011";
+}
+
+.foundicon-acc-key:before {
+  content: "\f012";
+}
+
+.foundicon-acc-hearing-impaired:before {
+  content: "\f013";
+}
+
+.foundicon-acc-male:before {
+  content: "\f014";
+}
+
+.foundicon-acc-female:before {
+  content: "\f015";
+}
+
+.foundicon-acc-network:before {
+  content: "\f016";
+}
+
+.foundicon-acc-guidedog:before {
+  content: "\f017";
+}
+
+.foundicon-acc-universal-access:before {
+  content: "\f018";
+}
+
+.foundicon-acc-elevator:before {
+  content: "\f019";
+}

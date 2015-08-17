@@ -1,0 +1,145 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+{# This is row consisting of 12 columns that will display all messages passed in the request #}
+{% include "admin/messages.html" %}
+
+<div class="row">
+  <div class="large-12 columns">
+    <h1>Scheduled Maintenance Details</h1>
+    <p>This page contains all current information on the status of this scheduled maintenance.</p>
+  </div>
+</div>
+
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="large-4 columns">
+    <a href="/admin/m_update?id={{id}}" title="edit"><span class="foundicon-gen-edit foundicon_container_iconlink"></span></a>
+    &nbsp;&nbsp;
+    <a href="/admin/m_delete?id={{id}}" title="delete"><span class="foundicon-gen-trash foundicon_container_iconlink"></span></a>
+  </div>
+</div>
+<div class="spacer_small"></div>
+{% endif %} 
+
+<div class="row">
+  <div class="large-12 columns">
+    <table>
+      <thead>
+        <tr>
+          <th colspan="2">Maintenance Details</th>
+        </tr>
+      </thead>
+       
+      <tbody>
+        <tr>
+          <td width="165">Maintenance Status</td>
+          <td>
+            <b>
+              {{details.0.status__status}}
+            </b>
+          </td>
+        </tr>
+        <tr>       
+          <td>Services Impacted</td>
+          <td>
+           {% if services %}
+           {% for row in services %}
+           {{row.event_service__service__service_name}}
+            <br>
+           {% endfor %}
+           {% else %}
+           <b><font color="red">- NO SERVICES DEFINED</font></b>
+           {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td>Start Time</td>
+          <td>{{details.0.start|date:"Y-m-d H:i e"}}</td>
+        </tr>
+        <tr>
+          <td>End Time</td>
+          <td>{{details.0.end|date:"Y-m-d H:i e"}}</td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td>{{details.0.description|linebreaksbr}}</td>
+        </tr>
+        {% if details.0.event_impact__impact %}
+        <tr>
+          <td>Impact Analysis</td>
+          <td>{{details.0.event_impact__impact|linebreaksbr}}</td>
+         </tr>
+        {% endif %}
+        {% if details.0.event_coordinator__coordinator %}
+        <tr>
+          <td>Coordinator</td>
+          <td>{{details.0.event_coordinator__coordinator|linebreaksbr}}</td>
+        </tr>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <tr>
+          <td>Created By</td>
+          <td>{{details.0.user_id__first_name}} {{details.0.user_id__last_name}}</td>
+        </td>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if updates %}
+<div class="spacer_medium"></div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <table>
+      <thead>
+        <tr>
+          <th colspan="{% if user.is_authenticated %}3{% else %}2{% endif %}">Maintenance Updates</th>
+        </tr>
+        <tr>
+          <th width="200">Time</th>
+          {% if user.is_authenticated %}
+          <th width="165">Logged By</th>
+          {% endif %}
+          <th>Detail</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {% for row in updates %}
+        <tr>
+         <td>{{row.event_update__date|date:"Y-m-d H:i:s e"}}</td>
+         {% if user.is_authenticated %}
+         <td>{{row.event_update__user__first_name}} {{row.event_update__user__last_name}}</td>
+         {% endif %}
+         <td>{{row.event_update__update|linebreaksbr}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+ 
+{% endblock %}

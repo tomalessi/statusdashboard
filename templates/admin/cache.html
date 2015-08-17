@@ -1,0 +1,91 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+<div class="row">
+	{# This is a large-3 side nav #}
+	{% include "admin/side_nav.html" %}
+
+	<div class="large-9 columns">
+    
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>Cache Settings</h1>
+        <p>If you have your DJango server configured to utilize a cache, the current settings/statistics will be displayed below.</p>
+        <hr>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        {% if cache_settings %}
+          <h5>Settings</h5>
+          <p>
+            {% for cache,details in cache_settings.items %}
+            Name: <b>{{cache}}</b>
+            <br>
+            Backend: <b>{{details.BACKEND}}</b>
+            <br>
+            {% endfor %}
+            </p>
+        {% else %}
+        <p>No Cache Defined</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="spacer_medium"></div>
+    
+    <div class="row">
+      <div class="large-12 columns">
+
+        <h5>Statistics</h5>
+        {% if m_stats.1 %}
+
+          <table class="responsive">
+
+            {# First the headings #}
+            <tr>
+            {% for item in m_stats.0 %}
+              <th>{{item}}</th>
+            {% endfor %}
+            </tr>
+            
+            {# Now the stats #}
+            {% for key,value in m_stats.1.items %}
+            <tr>
+              <td>{{key}}</td>
+              {% for stat in value %}
+              <td>{{stat}}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+           </table>
+        {% else %}
+        <p>It looks like you are not running memcached - please consider setting it up.</p>
+        {% endif %}
+      </div>
+    </div>
+
+	</div>
+</div>
+
+{% endblock %}

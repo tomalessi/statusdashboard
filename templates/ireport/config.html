@@ -1,0 +1,201 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+
+<form method="POST" action="/admin/ireport_config">
+{% csrf_token %}
+
+<div class="row">
+	{# This is a large-3 side nav #}
+	{% include "admin/side_nav.html" %}
+
+	<div class="large-9 columns">
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>Incident Report Configuration</h1>
+        <p>Complete the relevant fields below to enable your users to submit incident reports.</p>
+        <hr>
+      </div>
+    </div>
+
+    {# This is row consisting of 12 columns that will display all messages passed in the request #}
+    {% include "admin/messages.html" %}
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">Enable Incident Reports</span><br>
+        <div class="sublabel_container"><span class="sublabel">If enabled, the incident report link will be visible in the header.  If disabled, the incident report will not appear and access to incident report link will be denied will be denied.</span></div>
+      </div>
+    </div>
+
+		<div class="row">
+			<div class="large-12 columns">
+       <label><input type="checkbox" name="enabled" {% if ireport_config.0.enabled %}checked{% endif %} />
+        Enabled</label>
+        {% if form.enabled.errors %}
+        <span class="err">{% for error in form.enabled.errors %}{{error}}<br>{% endfor %}<br></span>
+        {% endif %}
+			</div>
+		</div>
+
+  	<div class="spacer_medium"></div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">Enable Email Notifications</span><br>
+        <div class="sublabel_container"><span class="sublabel">If enabled, when users submit incident reports, an email will be sent to the text pager email address.{% if not email_enabled %}  Before you enable this option, you must enable global email functionality and also define a text pager recipient in the <a href="/admin/email_config">email administration console</a>.{% endif %}</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+       <label><input type="checkbox" name="email_enabled" {% if email_enabled %}{% if form.email_enabled.data %}checked{% else %}{% if ireport_config.0.email_enabled %}checked{% endif %}{% endif %}{% else %}disabled{% endif %} />
+        Enabled</label>
+        {% if form.email_enabled.errors %}
+        <span class="err">{% for error in form.email_enabled.errors %}{{error}}<br>{% endfor %}<br></span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="spacer_medium"></div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">Instructions</span>
+        &nbsp;<b><span id="instructions_counter" class="counter"></span></b>
+        <div class="sublabel_container"><span class="sublabel">A message that will be displayed on the report incident page.  Use this message to instruct your users about the type of data you require when submitting an incident report.</span></div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="large-12 columns {% if form.instructions.errors %}error{% endif %}">
+        <textarea id="instructions" name="instructions" placeholder="Enter instructions" maxlength="500">{% if form.instructions.data %}{{form.instructions.data}}{% else %}{{ireport_config.0.instructions}}{% endif %}</textarea>
+        {% if form.instructions.errors %}
+        <br><span class="err">{% for error in form.instructions.errors %}{{error}}<br>{% endfor %}<br></span>
+        {% endif %} 
+      </div>
+    </div>
+
+    <div class="spacer_medium"></div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">Submit Message</span>
+        &nbsp;<b><span id="submit_message_counter" class="counter"></span></b>
+        <div class="sublabel_container"><span class="sublabel">A message that will be displayed to the submitting user after their message has been received.  Use this message to let your users know what to expect as a next step.</span></div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="large-12 columns {% if form.submit_message.errors %}error{% endif %}">
+        <textarea id="submit_message" name="submit_message" placeholder="Enter a submit message" maxlength="1000">{% if form.submit_message.data %}{{form.submit_message.data}}{% else %}{{ireport_config.0.submit_message}}{% endif %}</textarea>
+        {% if form.submit_message.errors %}
+        <br><span class="err">{% for error in form.submit_message.errors %}{{error}}<br>{% endfor %}<br></span>
+        {% endif %} 
+      </div>
+    </div>
+
+    <div class="spacer_medium"></div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">Enable File Uploads</span><br>
+        <div class="sublabel_container"><span class="sublabel">If enabled, users will have the ability to attach up to 2 image files (most likely screenshots) to an incident report.  These images will be available for viewing by administrators.</span></div>
+      </div>
+    </div>
+
+		<div class="row">
+			<div class="large-12 columns {% if form.upload_enabled.errors %}error{% endif %}">
+       <label><input type="checkbox" name="upload_enabled" {% if form.upload_enabled.data %}checked{% else %}{% if ireport_config.0.upload_enabled %}checked{% endif %}{% endif %} />
+        Enabled</label>
+        {% if form.upload_enabled.errors %}
+        <span class="err">{% for error in form.upload_enabled.errors %}{{error}}<br>{% endfor %}<br></span>
+        {% endif %}
+			</div>
+		</div>
+
+  	<div class="spacer_medium"></div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">File Upload Path</span><br>
+        <div class="sublabel_container"><span class="sublabel">The local file system path where user uploaded images will be stored.  If SSD is being run from multiple web servers, this path should be shared and available to all web servers.  This path should also match what is listed in wsgi.conf (for example: /opt/ssd-local/uploads).  If this value is changed, you may need to restart the SSD Apache server(s).</span></div>
+      </div>
+    </div>
+		
+		<div class="row">
+			<div class="large-12 columns {% if form.upload_path.errors %}error{% endif %}">
+		 		<input type="text" name="upload_path" maxlength="100" placeholder="Enter a valid file system path" value="{% if form.upload_path.data %}{{form.upload_path.data}}{% else %}{{ireport_config.0.upload_path}}{% endif %}" />
+		    {% if form.upload_path.errors %}
+        <span class="err">{% for error in form.upload_path.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %} 
+		  </div>
+		</div>
+
+  	<div class="spacer_medium"></div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">Uploaded File Size</span><br>
+        <div class="sublabel_container"><span class="sublabel">The maximum size, in bytes, of uploaded images.</span></div>
+      </div>
+    </div>
+
+		<div class="row">
+			<div class="large-12 columns {% if form.file_size.errors %}error{% endif %}">
+		 		<input type="text" name="file_size" maxlength="5" placeholder="Bytes" value="{% if form.file_size.data %}{{form.file_size.data}}{% else %}{{ireport_config.0.file_size}}{% endif %}" />
+		    {% if form.file_size.errors %}
+        <span class="err">{% for error in form.file_size.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %} 
+		  </div>
+		</div>
+		
+  	<div class="spacer_small"></div>
+
+    <div class="row">
+		  <div class="large-11 columns">
+		    <input type="submit" class="small button secondary" value="Save"/>
+		  </div>
+		</div>
+		
+	</div>
+</div>
+
+</form>
+
+
+<script>
+  // Textarea counters
+  $("#instructions").keyup(function(){
+    $("#instructions_counter").text("Characters remaining: " + (1000 - $(this).val().length));
+  });
+  $("#submit_message").keyup(function(){
+    $("#submit_message_counter").text("Characters remaining: " + (100 - $(this).val().length));
+  });
+</script>
+
+
+{% endblock %}
+
+
+

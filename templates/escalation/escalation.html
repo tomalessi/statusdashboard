@@ -1,0 +1,76 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+<div class="row">
+  <div class="large-12 columns">
+    <h1>Escalation Path</h1>
+    <p>{{instructions}}</p>
+  </div>
+</div>
+
+<div class="spacer_small"></div>
+
+{% if contacts %}
+<div class="row">
+  <div class="large-12 columns">
+    <a href="#" data-dropdown="keydrop"><span class="foundicon-acc-key foundicon_container_key"></span></a>
+      <div id="keydrop" class="f-dropdown content keydrop" data-dropdown-content>
+        <div>
+          <h5>Escalation Key</h5>
+          <div class="spacer_small"></div>
+        </div>
+        <div>
+          <span class="legend">The escalation contact path is displayed in order of priority, from left to right.  The contact on the far left should be contacted first, and the contact on the far right last.</span>
+        </div>
+      </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="large-12 columns">
+    {% if contacts %}
+    <div class="section-container auto" data-section data-section-resized>
+      {% for contact in contacts %}
+      <section {% if forloop.first %}class="active"{% endif %}>
+        <p class="title" data-section-title><a href="#panel1">Escalate:&nbsp;<span class="foundicon-genenc-right-arrow foundicon_container_escalate"></span><br>{{contact.name}}</a></p>
+        <div class="content" data-section-content>
+          <p> 
+           <br>
+           {{contact.contact_details|linebreaksbr}}
+         </p>
+        </div>
+      </section>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p>THERE ARE CURRENTLY NO ESCALATION CONTACTS DEFINED.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="spacer_medium"></div>
+
+{% endblock %}
+
+
+

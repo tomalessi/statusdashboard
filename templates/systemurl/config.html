@@ -1,0 +1,84 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+		
+<form method="POST" action="/admin/systemurl_config">
+{% csrf_token %}
+
+<div class="row">
+	{# This is a large-3 side nav #}
+	{% include "admin/side_nav.html" %}
+
+	<div class="large-9 columns">
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>System Url Configuration</h1>
+        <p>Complete the relevant fields below to display a system url on any communication that this system sends out.</p>
+        <hr>
+      </div>
+    </div>
+
+    {# This is row consisting of 12 columns that will display all messages passed in the request #}
+    {% include "admin/messages.html" %}
+
+		<div class="row">
+			<div class="large-8 columns {% if form.url.errors %}error{% endif %}">
+        <label>System Url</label>
+        <div class="sublabel_container"><span class="sublabel">The system url should be a fully qualified domain name (e.g. http://www.domain.com).</span></div>
+		 		<input type="text" name="url" maxlength="250" placeholder="Enter a system url" value="{% if form.url.data %}{{form.url.data}}{% else %}{{systemurl_config.0.url}}{% endif %}" />
+		    {% if form.url.errors %}
+        <span class="err">{% for error in form.url.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %} 
+		  </div>
+		</div>
+
+    <div class="spacer_small"></div>
+
+		<div class="row">
+			<div class="large-12 columns {% if form.url_enabled.errors %}error{% endif %}">
+        <label>System Url Enabled</label>
+        <div class="sublabel_container"><span class="sublabel">If enabled, the system url will be included in any communication that this system sends out so that users will be directed back to the dashboard.</span></div>
+       <label><input type="checkbox" name="url_enabled" {% if form.url_enabled.data %}checked{% else %}{% if systemurl_config.0.url_enabled %}checked{% endif %}{% endif %} />
+        Enabled</label>
+        {% if form.url_enabled.errors %}
+        <span class="err">{% for error in form.url_enabled.errors %}{{error}}<br>{% endfor %}<br></span>
+        {% endif %}
+			</div>
+		</div>
+
+  	<div class="spacer_small"></div>
+
+    <div class="row">
+		  <div class="large-11 columns">
+		    <input type="submit" class="small button secondary" value="Save"/>
+		  </div>
+		</div>
+
+	</div>
+</div>
+
+</form>
+
+{% endblock %}
+
+
+

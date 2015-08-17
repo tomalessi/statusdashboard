@@ -1,0 +1,100 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+<div class="row">
+  {# This is a large-3 side nav #}
+  {% include "admin/side_nav.html" %}
+
+  <div class="large-9 columns">
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>Open Maintenance List</h1>
+        <p>Listed below are all scheduled maintenance events that are not in a completed state.</p>
+        <hr>
+      </div>
+    </div>
+
+    {# This is row consisting of 12 columns that will display all messages passed in the request #}
+    {% include "admin/messages.html" %}
+
+    <div class="spacer_medium"></div>
+
+    {% if maintenances %}
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="navigation">
+          {% if maintenances.has_previous %}
+            <a href="?page={{maintenances.previous_page_number}}">&laquo;</a>
+          {% endif %}
+
+          <span>Page {{maintenances.number}} of {{maintenances.paginator.num_pages}}</span>
+
+          {% if maintenances.has_next %}
+            <a href="?page={{maintenances.next_page_number}}">&raquo;</a>
+          {% endif %}
+        </span>
+        &nbsp;&nbsp;
+        <span class="navigation">({{maintenances.paginator.count}} total result{{maintenances.paginator.count|pluralize}})</span>
+      </div>
+    </div>
+
+    <div class="spacer_small"></div>
+
+    {% endif %}
+
+    <div class="row">
+      <div class="large-12 columns">
+        {% if maintenances %}
+        <table>
+          <tr>
+            <th width="155">Start Time</th>
+            <th>Description</th>
+            <th width="110"></th>
+          </tr>
+          {% for maintenance in maintenances %}
+          <tr>
+            <td>{{maintenance.start|date:"Y-m-d H:i:s e"}}</td>
+            <td>{{maintenance.description}}</td>
+            <td>
+              <a href="/m_detail?id={{maintenance.id}}" title="More detail"><span class="foundicon-gen-page foundicon_container_iconlink"></span></a>
+              <a href="/admin/m_delete?id={{maintenance.id}}" title="Delete"><span class="foundicon-gen-trash foundicon_container_iconlink"></span></a>
+              {% if maintenance.event_email__email__email and email_enabled %}<a href="/admin/m_email?id={{maintenance.id}}" title="Send email reminder to {{maintenance.event_email__email__email}}"><span class="foundicon-gen-mail foundicon_container_iconlink"></span></a>{% endif %}
+              <a href="/admin/m_update?id={{maintenance.id}}" title="Edit"><span class="foundicon-gen-edit foundicon_container_iconlink"></span></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <p>There are no planned or started scheduled maintenance events.</p>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+

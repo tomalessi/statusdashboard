@@ -1,0 +1,145 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+		
+<form method="POST" action="/admin/messages_config">
+{% csrf_token %}
+
+<div class="row">
+	{# This is a large-3 side nav #}
+	{% include "admin/side_nav.html" %}
+
+	<div class="large-9 columns">
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>Messages Configuration</h1>
+        <p>Complete the relevant fields below to display a message to your users above the main dashboard, or to display a prominent alert message.</p>
+        <hr>
+      </div>
+    </div>
+
+    {# This is row consisting of 12 columns that will display all messages passed in the request #}
+    {% include "admin/messages.html" %}
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">System Message</span>
+      </div>
+    </div>    
+
+    <div class="spacer_small"></div>
+
+    <div class="row">
+      <div class="large-12 columns {% if form.main_enabled.errors %}error{% endif %}">
+        <label>Enable System Message</label>
+        <div class="sublabel_container"><span class="sublabel">If enabled, the system message will be displayed directly above the main dashboard page.</span></div>
+        <label><input type="checkbox" name="main_enabled" {% if form.main_enabled.data %}checked{% else %}{% if messages_config.0.main_enabled %}checked{% endif %}{% endif %} />
+        Enabled</label>
+        {% if form.main_enabled.errors %}
+        <span class="err">{% for error in form.main_enabled.errors %}{{error}}<br>{% endfor %}<br></span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="spacer_small"></div>
+
+		<div class="row">
+			<div class="large-12 columns {% if form.main.errors %}error{% endif %}">
+        <label>System Message
+        &nbsp;<span id="main_counter" class="counter"></span>
+        </label>
+        <div class="sublabel_container"><span class="sublabel">Enter the system message.</span></div>
+		 		<textarea id="main" name="main" placeholder="Enter a system message" maxlength="1000">{% if form.main.data %}{{form.main.data}}{% else %}{{messages_config.0.main}}{% endif %}</textarea>
+		    {% if form.main.errors %}
+        <br><span class="err">{% for error in form.main.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %} 
+		  </div>
+		</div>
+
+    <div class="spacer_medium"></div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">System Alert</span>
+      </div>
+    </div>    
+
+    <div class="spacer_small"></div>
+
+    <div class="row">
+      <div class="large-12 columns {% if form.alert_enabled.errors %}error{% endif %}">
+        <label>Enable System Alert</label>
+        <div class="sublabel_container"><span class="sublabel">A prominent message will be displayed in bold red above the main dashboard page.</span></div>
+       <label><input type="checkbox" name="alert_enabled" {% if form.alert_enabled.data %}checked{% else %}{% if messages_config.0.alert_enabled %}checked{% endif %}{% endif %} />
+        Enabled</label>
+        {% if form.alert_enabled.errors %}
+        <span class="err">{% for error in form.alert_enabled.errors %}{{error}}<br>{% endfor %}<br></span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="spacer_small"></div>
+
+		<div class="row">
+			<div class="large-12 columns {% if form.alert.errors %}error{% endif %}">
+        <label>System Alert
+        &nbsp;<span id="alert_counter" class="counter"></span>
+        </label>
+        <div class="sublabel_container"><span class="sublabel">Enter the system alert.</span></div>
+		 		<textarea id="alert" name="alert" placeholder="Enter a system alert" maxlength="1000">{% if form.alert.data %}{{form.alert.data}}{% else %}{{messages_config.0.alert}}{% endif %}</textarea>
+		    {% if form.alert.errors %}
+        <br><span class="err">{% for error in form.alert.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %}
+		  </div>
+		</div>
+
+    <div class="spacer_small"></div>
+
+		<div class="row">
+		  <div class="large-11 columns">
+		    <input type="submit" class="small button secondary" value="Save"/>
+		  </div>
+		</div>
+
+	</div>
+</div>
+
+</form>
+
+
+
+
+<script>
+  // Textarea counters
+  $("#main").keyup(function(){
+    $("#main_counter").text("Characters remaining: " + (1000 - $(this).val().length));
+  });
+  $("#alert").keyup(function(){
+    $("#alert_counter").text("Characters remaining: " + (1000 - $(this).val().length));
+  });
+</script>
+
+
+{% endblock %}
+
+
+

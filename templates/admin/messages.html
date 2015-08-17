@@ -1,0 +1,20 @@
+{# Include this in any pages that require display of request messages that are set in any view #}
+{% if messages %}
+<div class="row">
+  <div class="large-12 columns">
+    {# If there are messages in the queue, then show them.  There should only be one message #}
+    {% for message in messages %}
+      {% if message.tags %}
+        {% if message.tags == 'success' %}
+          <span class="success">{{message}}</span>
+        {% else %}
+          {% if message.tags == 'error' %}
+            <span class="err_lg">{{message}}</span>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    <br><br>
+  </div>
+</div>
+{% endif %}

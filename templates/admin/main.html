@@ -1,0 +1,62 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+<div class="row">
+	{# This is a large-3 side nav #}
+	{% include "admin/side_nav.html" %}
+
+  <div class="large-9 columns">
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>SSD Administration</h1>
+        <p>Use this administration console to manage all configuration options.</p>
+        <hr><br>
+      </div>
+    </div>
+
+    {# This is row consisting of 12 columns that will display all messages passed in the request #}
+    {% include "admin/messages.html" %}
+
+    <div class="row">
+      <div class="large-12 columns">
+        <p>
+          SSD Version: <b>{{app_version}}</b>
+          <br>
+          DJango Version: <b>{{django_version}}</b>
+        </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <p>
+          Administrative user accounts can be managed through the DJango administration console <a href="/djadmin">here</a>.  Note that only an account with superadmin privileges can add/modify user accounts.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+
+

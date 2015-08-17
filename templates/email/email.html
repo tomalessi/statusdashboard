@@ -1,0 +1,93 @@
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+<br>
+{{greeting|linebreaksbr}}
+<br><br><br>
+
+<b>Event Status:</b><br>
+{{details.0.status__status}}
+<br><br><br>
+
+<b>Event Start:</b><br>
+{{details.0.start|date:"Y-m-d H:i e"}}
+<br><br><br>
+
+<b>Event End:</b><br>
+{% if details.0.end %}
+{{details.0.end|date:"Y-m-d H:i e"}}
+{% else %}
+n/a
+{% endif %}
+<br><br><br>
+
+
+<b>Services Impacted:</b><br>
+{% if services %}
+{% for row in services %}
+- {{row.event_service__service__service_name}}<br>
+{% endfor %}
+{% else %}
+- NO SERVICES DEFINED<br>
+{% endif %}
+<br><br>
+
+
+<b>Event Description:</b><br>
+{{details.0.description|linebreaksbr}}
+<br><br><br>
+
+
+{% if details.0.event__coordinator__coordinator %}
+<b>Event Coordinator:</b><br>
+{{details.0.event_coordinator__coordinator|linebreaksbr}}
+<br><br><br>
+{% endif %}
+
+
+{% if details.0.event_impact__impact %}
+<b>Event Impact Analysis:</b><br>
+{{details.0.event_impact__impact}}
+<br><br><br>
+{% endif %}
+
+
+{% if updates %}
+<b>Event Updates:</b>
+<br><br>
+{% for row in updates %}
+<b>Date:</b> {{row.event_update__date|date:"Y-m-d H:i:s e"}}<br>
+<b>Update</b>: {{row.event_update__update}}<br>
+<br>
+{% endfor %}
+{% endif %}
+
+<br>
+<hr>
+
+{% if email_footer %}
+<br><br>
+{{email_footer|linebreaksbr}}
+{% endif %}
+{% if ssd_url %}
+<br><br>
+You may visit the Status Dashboard at any time for current information on the status of all services: {{ssd_url}}
+{% endif %}
+
+
+

@@ -1,0 +1,147 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+{# This is row consisting of 12 columns that will display all messages passed in the request #}
+{% include "admin/messages.html" %}
+
+<div class="row">
+  <div class="large-12 columns">
+    <h1>Search Results&nbsp;<a href="#" title="Enter custom search criteria"><span id="search_button" class="foundicon-gen-search foundicon_container_search"></span></a></h1>
+    <p>Use this page to search through all events, or constrain your search by using custom search criteria.</p></span>
+  </div>
+</div>
+
+{% if events %}
+<div class="row">
+  <div class="large-12 columns">
+    <span class="navigation">
+      {% if events.has_previous %}
+        <a href="?page={{events.previous_page_number}}{% if query_params %}&{{query_params}}{% endif %}">&laquo;</a>
+      {% endif %}
+
+      Page {{events.number}} of {{events.paginator.num_pages}}
+
+      {% if events.has_next %}
+        <a href="?page={{events.next_page_number}}{% if query_params %}&{{query_params}}{% endif %}">&raquo;</a>
+      {% endif %}
+    </span>
+    &nbsp;&nbsp;
+    <span class="navigation">({{events.paginator.count}} total result{{events.paginator.count|pluralize}})</span>
+  </div>
+</div>
+{% endif %}
+
+<div class="spacer_micro"></div>
+
+<div class="row">
+  <form method="GET" action="/search/events">
+  <div class="large-12 columns">
+    {# If a custom query is being performed, or there was an error in the custom search, expand #}
+    <div class="panel" id="search" style="background-color: white;{% if not form.errors and not query_params %} display: none;{% endif %}">
+      <div class="row">
+        <div class="large-2 columns {% if form.start.errors %}error{% endif %}">
+          <label>Date From:<input type="text" name="start" id="start" class="date" value="{% if form.start.data %}{{form.start.data}}{% else %}{{start|date:"Y-m-d"}}{% endif %}"/></label>
+          {% if form.start.errors %}
+          <span class="err">{% for error in form.start.errors %}{{error}}<br>{% endfor %}<br></span>
+          {% endif %}            
+        </div>
+        <div class="large-2 columns {% if form.end.errors %}error{% endif %}">
+          <label>Date To:<input type="text" name="end" id="end" class="date" value="{% if form.end.data %}{{form.end.data}}{% else %}{{end|date:"Y-m-d"}}{% endif %}"/></label>
+          {% if form.end.errors %}
+          <span class="err">{% for error in form.end.errors %}{{error}}<br>{% endfor %}<br></span>
+          {% endif %}            
+        </div>
+        <div class="large-3 columns {% if form.type.errors %}error{% endif %}">
+          <label>Event Type:
+          <select name="type">
+            <option disabled selected>Select Type</option>
+            <option value="incident" {% if type == 'incident' %}selected{% endif %}>incidents</option>
+            <option value="maintenance" {% if type == 'maintenance' %}selected{% endif %}>maintenance</option>
+          </select></label>       
+        </div>
+        <div class="large-5 columns left">
+          <label>Search Description:<input type="text" name="text" maxlength="50" placeholder="Enter search text" value="{{text}}" /></label>
+          {% if form.text.errors %}
+          <span class="err">{% for error in form.text.errors %}{{error}}<br>{% endfor %}<br></span>
+          {% endif %} 
+        </div>
+      </div>
+      <div class="row">
+        <div class="large-2 columns">
+          <input type="submit" class="small button secondary" value="search"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>
+</div>
+
+{% if events %}
+  {% for event in events %}
+    <div class="spacer_medium"></div>
+    <div class="row">
+      <div class="large-12 large-centered columns">  
+        <div class="search_results">{% if event.type__type = 'incident' %}<a href="/i_detail?id={{event.id}}">{{event.start|date:"Y-m-d H:i:s e"}}</a>{% else %}{% if event.type__type = 'maintenance' %}<a href="/m_detail?id={{event.id}}">{{event.start|date:"Y-m-d H:i:s e"}}</a>{% endif %}{% endif %}</div>     
+        <div class="search_results"><b>Type:</b> {{event.type__type}}</div>
+        <div class="search_results"><b>Status:</b> {{event.status__status}}</div>
+        <div class="search_results"><b>Description:</b> {{event.description}}</div>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+<div class="spacer_medium"></div>
+<div class="row">
+  <div class="large-12 columns">  
+    <p>There are no events to display</p>
+  </div>
+</div>
+{% endif %}
+
+<div class="spacer_medium"></div>
+
+<script type="text/javascript">
+
+   // Date Pickers and Submit
+   $(function() {
+
+      //Start Date
+      $("#start").datepicker({dateFormat: 'yy-mm-dd'});
+
+      //End Date
+      $("#end").datepicker({dateFormat: 'yy-mm-dd'});
+   });
+
+   // Settings Slider
+   $(function() {
+      $("#search_button").click(function () {
+        $("#search").slideToggle("fast");
+      });
+   });
+
+
+
+</script>
+
+{% endblock %}
+
+
+

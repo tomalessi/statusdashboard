@@ -1,0 +1,60 @@
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+{{greeting}}
+
+
+*** Event Status ***
+{{details.0.status__status}}
+
+
+*** Event Start ***
+{{details.0.start|date:"Y-m-d H:i e"}}
+
+
+*** Event End ***
+{% if details.0.end %}{{details.0.end|date:"Y-m-d H:i e"}}{% else %}n/a{% endif %}
+
+
+*** Services Impacted ***{% if services %}{% for row in services %}
+- {{row.event_service__service__service_name}}{% endfor %}{% else %}- NO SERVICES DEFINED{% endif %}
+
+
+*** Event Description ***
+{{details.0.description}}
+{% if details.0.event_coordinator__coordinator %}
+
+*** Event Coordinator ***
+{{details.0.event_coordinator__coordinator}}{% endif %}{% if details.0.event_impact__impact %}
+
+
+*** Event Impact Analysis ***
+{{details.0.event_impact__impact}}{% endif %}{% if updates %}
+
+
+*** Event Updates ***{% for row in updates %}
+Date: {{row.event_update__date|date:"Y-m-d H:i:s e"}}
+Update: {{row.event_update__update}}
+{% endfor %}
+{% endif %}
+
+--------------
+
+{% if ssd_url %}You may visit the Status Dashboard at any time for current information on the status of all services: {{ssd_url}}
+{% endif %}
+{% if email_footer %}{{email_footer}}{% endif %}
+

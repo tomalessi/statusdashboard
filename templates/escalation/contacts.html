@@ -1,0 +1,220 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+<script>
+  // Set edit style to popup instead of inline
+  $.fn.editable.defaults.mode = 'popup';
+</script>
+
+<div class="row">
+  {# This is a large-3 side nav #}
+  {% include "admin/side_nav.html" %}
+
+  <div class="large-9 columns">
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>Escalation Path Configuration</h1>
+        <p>If you would like to display escalation contacts as part of your dashboard configuration, complete the relevant fields below.</p>
+        <hr>
+      </div>
+    </div>
+
+    {# This is row consisting of 12 columns that will display all messages passed in the request #}
+    {% include "admin/messages.html" %}
+
+    <div class="row">
+      <div class="large-12 columns">
+        <span class="radius secondary label">Current Contacts and Order</span>
+        <a href="#" data-dropdown="keydrop"><span class="foundicon-acc-key foundicon_container_key" title="Contacts key"></span></a>
+        
+
+        <div id="keydrop" class="f-dropdown content keydrop" data-dropdown-content>
+          <div>
+            <h5>Contacts Key</h5>
+            <div class="spacer_small"></div>
+          </div>
+          <div>
+            <span class="legend"><i class="foundicon-gen-up-arrow"></i>&nbsp;Move an escalation contact up.</span>
+            <div class="spacer_small"></div>
+          </div>
+          <div>
+            <span class="legend"><i class="foundicon-gen-down-arrow"></i>&nbsp;Move an escalation contact down.</span>
+            <div class="spacer_small"></div>
+          </div>
+          <div>
+            <span class="legend"><i class="foundicon-gen-checkmark"></i>&nbsp;Show an escalation contact that is currently hidden.</span>
+            <div class="spacer_small"></div>
+          </div>
+          <div>
+            <span class="legend"><i class="foundicon-gen-remove"></i>&nbsp;Hide an escalation contact that is currently being shown.</span>
+            <div class="spacer_small"></div>
+          </div>
+          <div>
+            <span class="legend"><i class="foundicon-gen-trash"></i>&nbsp;Delete an escalation contact.</span>
+            <div class="spacer_small"></div>
+          </div>
+        </div>
+
+        <br><br>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        {% if contacts %}
+        <table class="responsive">
+          <tr>
+           <th>Order</th>
+           <th>Name</th>
+           <th>Details</th>
+           <th>Up/Down</th>
+           <th>Show/Hide</th>
+           <th>Delete</th>
+          </tr>
+          {% for row in contacts %}
+          <tr>
+            <td>{{row.order}}</td>
+            <td>
+              <span>
+                <a href="#" title="Modify contact name" id="name_{{row.id}}">{{row.name}}</a>
+                <script>
+                $(document).ready(function() {
+                  $('#name_{{row.id}}').editable({
+                        url: '/admin/contact_modify',
+                        tpl: '<input type="text" maxlength="50">',
+                        type: 'text',
+                        pk: '{{row.id}}',
+                        name: 'name',
+                        inputclass: 'x_editable_text',
+                        params: { csrfmiddlewaretoken: '{{csrf_token}}'},
+                        error: function(response, newValue) {
+                          return response.responseText;
+                        }
+                    });
+                });
+                </script>
+              </span>
+            </td>
+
+            <td>
+              <span>
+                <a href="#" title="Modify contact details" id="details_{{row.id}}">{{row.contact_details|linebreaksbr}}</a>
+                <script>
+                $(document).ready(function() {
+                  $('#details_{{row.id}}').editable({
+                        url: '/admin/contact_modify',
+                        tpl: '<textarea maxlength="200"></textarea>',
+                        type: 'textarea',
+                        pk: '{{row.id}}',
+                        name: 'contact_details',
+                        inputclass: 'x_editable_contact',
+                        params: { csrfmiddlewaretoken: '{{csrf_token}}'},
+                        error: function(response, newValue) {
+                          return response.responseText;
+                        }
+                    });
+                });
+                </script>
+              </span>
+            </td>
+            <td>
+              <a href="/admin/contact_switch?id={{row.id}}&action=up" title="move up"><span class="foundicon-gen-up-arrow foundicon_container_iconlink"></span></a>
+              <a href="/admin/contact_switch?id={{row.id}}&action=down" title="move down"><span class="foundicon-gen-down-arrow foundicon_container_iconlink"></span></a>
+            </td>
+            <td>
+             {% if row.hidden %}
+              <a href="/admin/contact_switch?id={{row.id}}&action=show" title="show"><span class="foundicon-gen-checkmark foundicon_container_iconlink"></span></a>
+             {% else %}
+              <a href="/admin/contact_switch?id={{row.id}}&action=hide" title="hide"><span class="foundicon-gen-remove foundicon_container_iconlink"></span></a>
+             {% endif %}
+            </td>
+            <td>
+              <a href="/admin/contact_delete?id={{row.id}}"><span class="foundicon-gen-trash foundicon_container_iconlink"></span></div></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>      
+        {% else %}
+        <b>No contacts defined</b>
+        <br>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="spacer_medium"></div>
+
+    <form method="POST" action="/admin/escalation_contacts">
+    {% csrf_token %}
+    <div class="row">
+      <div class="large-12 columns {% if form.service.errors %}error{% endif %}">
+        <span class="radius secondary label">Add Escalation Contacts</span><br>
+        <div class="sublabel_container"><span class="sublabel">Escalation contacts added here can be shown/hidden on the escalation contacts page.  Contacts are initially created in a hidden state so you will need to show them after creation.</span></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-8 columns {% if form.name.errors %}error{% endif %}">
+        <label>Full Name</label>
+        <input name="name" type="text" value="{% if form.name.data %}{{form.name.data}}{% endif %}" maxlength="50" placeholder="Enter the contact name">
+        {% if form.name.errors %}
+        <small class="error">
+          {% for error in form.name.errors %}{{error}}{% endfor %}
+        </small>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns {% if form.contact_details.errors %}error{% endif %}">
+        <label>Contact Details
+          &nbsp;<span id="contact_details_counter" class="counter"></span>
+        </label>
+        <textarea id="contact_details" name="contact_details" maxlength="200" placeholder="Enter contact details">{% if form.contact_details.data %}{{form.contact_details.data}}{% endif %}</textarea>
+        {% if form.contact_details.errors %}
+        <small class="error">
+          {% for error in form.contact_details.errors %}{{error}}{% endfor %}
+        </small>
+        {% endif %}
+      </div>
+    </div>
+         
+    <div class="row">
+      <div class="large-12 columns">
+        <input type="submit" class="small button secondary" value="save"/>
+      </div>
+    </div>
+    </form> 
+
+  </div>
+</div>
+
+
+<script>
+  // Textarea counters
+  $("#contact_details").keyup(function(){
+    $("#contact_details_counter").text("Characters remaining: " + (160 - $(this).val().length));
+  });
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,216 @@
+/* font-face */
+@font-face {
+  font-family: "GeneralEnclosedFoundicons";
+  src: url("/html/css/foundicons/fonts/general_enclosed_foundicons.eot");
+  src: url("/html/css/foundicons/fonts/general_enclosed_foundicons.eot?#iefix") format("embedded-opentype"), url("/html/css/foundicons/fonts/general_enclosed_foundicons.woff") format("woff"), url("/html/css/foundicons/fonts/general_enclosed_foundicons.ttf") format("truetype"), url("/html/css/foundicons/fonts/general_enclosed_foundicons.svg#GeneralEnclosedFoundicons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* global foundicon styles */
+[class*="foundicon-genenc-"] {
+  display: inline;
+  width: auto;
+  height: auto;
+  line-height: inherit;
+  vertical-align: baseline;
+  background-image: none;
+  background-position: 0 0;
+  background-repeat: repeat;
+}
+
+[class*="foundicon-genenc"]:before {
+  font-family: "GeneralEnclosedFoundicons";
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+}
+
+/* icons */
+.foundicon-genenc-settings:before {
+  content: "\f000";
+}
+
+.foundicon-genenc-heart:before {
+  content: "\f001";
+}
+
+.foundicon-genenc-star:before {
+  content: "\f002";
+}
+
+.foundicon-genenc-plus:before {
+  content: "\f003";
+}
+
+.foundicon-genenc-minus:before {
+  content: "\f004";
+}
+
+.foundicon-genenc-checkmark:before {
+  content: "\f005";
+}
+
+.foundicon-genenc-remove:before {
+  content: "\f006";
+}
+
+.foundicon-genenc-mail:before {
+  content: "\f007";
+}
+
+.foundicon-genenc-calendar:before {
+  content: "\f008";
+}
+
+.foundicon-genenc-page:before {
+  content: "\f009";
+}
+
+.foundicon-genenc-tools:before {
+  content: "\f00a";
+}
+
+.foundicon-genenc-globe:before {
+  content: "\f00b";
+}
+
+.foundicon-genenc-home:before {
+  content: "\f00c";
+}
+
+.foundicon-genenc-quote:before {
+  content: "\f00d";
+}
+
+.foundicon-genenc-people:before {
+  content: "\f00e";
+}
+
+.foundicon-genenc-monitor:before {
+  content: "\f00f";
+}
+
+.foundicon-genenc-laptop:before {
+  content: "\f010";
+}
+
+.foundicon-genenc-phone:before {
+  content: "\f011";
+}
+
+.foundicon-genenc-cloud:before {
+  content: "\f012";
+}
+
+.foundicon-genenc-error:before {
+  content: "\f013";
+}
+
+.foundicon-genenc-right-arrow:before {
+  content: "\f014";
+}
+
+.foundicon-genenc-left-arrow:before {
+  content: "\f015";
+}
+
+.foundicon-genenc-up-arrow:before {
+  content: "\f016";
+}
+
+.foundicon-genenc-down-arrow:before {
+  content: "\f017";
+}
+
+.foundicon-genenc-trash:before {
+  content: "\f018";
+}
+
+.foundicon-genenc-add-doc:before {
+  content: "\f019";
+}
+
+.foundicon-genenc-edit:before {
+  content: "\f01a";
+}
+
+.foundicon-genenc-lock:before {
+  content: "\f01b";
+}
+
+.foundicon-genenc-unlock:before {
+  content: "\f01c";
+}
+
+.foundicon-genenc-refresh:before {
+  content: "\f01d";
+}
+
+.foundicon-genenc-paper-clip:before {
+  content: "\f01e";
+}
+
+.foundicon-genenc-video:before {
+  content: "\f01f";
+}
+
+.foundicon-genenc-photo:before {
+  content: "\f020";
+}
+
+.foundicon-genenc-graph:before {
+  content: "\f021";
+}
+
+.foundicon-genenc-idea:before {
+  content: "\f022";
+}
+
+.foundicon-genenc-mic:before {
+  content: "\f023";
+}
+
+.foundicon-genenc-cart:before {
+  content: "\f024";
+}
+
+.foundicon-genenc-address-book:before {
+  content: "\f025";
+}
+
+.foundicon-genenc-compass:before {
+  content: "\f026";
+}
+
+.foundicon-genenc-flag:before {
+  content: "\f027";
+}
+
+.foundicon-genenc-location:before {
+  content: "\f028";
+}
+
+.foundicon-genenc-clock:before {
+  content: "\f029";
+}
+
+.foundicon-genenc-folder:before {
+  content: "\f02a";
+}
+
+.foundicon-genenc-inbox:before {
+  content: "\f02b";
+}
+
+.foundicon-genenc-website:before {
+  content: "\f02c";
+}
+
+.foundicon-genenc-smiley:before {
+  content: "\f02d";
+}
+
+.foundicon-genenc-search:before {
+  content: "\f02e";
+}

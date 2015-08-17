@@ -1,0 +1,59 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+
+<div class="row">
+  {# This is a large-3 side nav #}
+  {% include "admin/side_nav.html" %}
+
+  <div class="large-9 columns">
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>Delete Incident Update</h1>
+        <p><span class="foundicon-gen-remove foundicon_container_delete"></span>&nbsp;&nbsp;&nbsp;Caution: If you delete this maintenance update, it will be lost forever.</p>
+        <hr>
+      </div>
+    </div>
+ 
+    <div class="row">
+      <div class="large-12 columns">
+        <p>Maintenance ID: {{event_id}}, Update ID: {{id}}</p>
+      </div>
+    </div>
+
+    <div class="spacer_small"></div>
+
+    <div class="row">
+      <div class="large-4 columns">
+        <form method="POST" action="/admin/m_update_delete">
+          {% csrf_token %}
+          <input type="hidden" name="id" value="{{id}}">
+          <input type="hidden" name="event_id" value="{{event_id}}">
+          <input type="submit" class="small button secondary" value="delete"/>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

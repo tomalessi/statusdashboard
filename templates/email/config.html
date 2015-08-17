@@ -1,0 +1,247 @@
+{% extends "base/base.html" %}
+
+{% comment %}
+
+ Copyright 2013 - Tom Alessi
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and 
+ limitations under the License.
+
+{% endcomment %}
+
+{% block content %}
+		
+<form method="POST" action="/admin/email_config">
+{% csrf_token %}
+
+<div class="row">
+	{# This is a large-3 side nav #}
+	{% include "admin/side_nav.html" %}
+
+	<div class="large-9 columns">
+
+	  <div class="row">
+	    <div class="large-12 columns">
+	      <h1>Email Configuration</h1>
+	      <p>If you plan to notify your users about events via email, please complete the relevant fields below.</p>
+	      <hr>
+	    </div>
+	  </div>
+
+    {# This is row consisting of 12 columns that will display all messages passed in the request #}
+    {% include "admin/messages.html" %}
+
+	  <div class="row">
+	    <div class="large-12 columns">
+        <span class="radius secondary label">Enable Email Functionality</span><br>
+        <div class="sublabel_container"><span class="sublabel">Select the checkbox to enable global email functionality.  This includes sending notifications/updates about incidents/maintenances and also notifications to administrative staff about incident reports.</span></div>
+	    </div>
+	  </div>
+
+	  <div class="row">
+	    <div class="large-12 columns">
+				<label><input type="checkbox" name="enabled" {% if form.enabled.data %}checked{% else %}{% if email_config.0.enabled == 1 %}checked{% endif %}{% endif %} />&nbsp;Enabled</label>
+	   		{% if form.enabled.errors %}
+				<span class="err">{% for error in form.enabled.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %} 
+			</div>
+		</div>
+
+		<div class="spacer_medium"></div>
+    
+	  <div class="row">
+	    <div class="large-12 columns">
+        <span class="radius secondary label">Email Format</span><br>
+        <div class="sublabel_container"><span class="sublabel">Select the format for email messages.  Messages sent in html format will be sent in Multipart MIME format and will include text and html versions.</span></div>
+	    </div>
+	  </div>
+		
+		<div class="row">
+			<div class="large-11 columns {% if form.email_format.errors %}error{% endif %}">
+	      <select name="email_format" class="config_email">
+	        {% if email_config.0.email_format %}
+		        <option value="1" selected="true">html</option>
+		        <option value="">text</option>
+	        {% else %}
+		        <option value="1">html</option>
+		        <option value="" selected="true">text</option>
+					{% endif %}
+	      </select>
+		    {% if form.email_format.errors %}
+				<span class="err">{% for error in form.email_format.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %}
+			</div>
+		</div>
+
+		<div class="spacer_medium"></div>
+
+	  <div class="row">
+	    <div class="large-12 columns">
+        <span class="radius secondary label">Email Addresses</span><br>
+      </div>
+    </div>
+
+    <div class="spacer_small"></div>
+
+		<div class="row">
+			<div class="large-6 columns">
+				<div class="row">
+					<div class="large-12 columns {% if form.from_address.errors %}error{% endif %}">
+		        <label>From Address</label>
+		        <div class="sublabel_container"><span class="sublabel">Enter a valid email address that messages sent from this system will originate from.</span></div>
+						<input type="text" name="from_address" placeholder="Enter a valid email address" maxlength="50" value="{% if form.from_address.data %}{{form.from_address.data}}{% else %}{{email_config.0.from_address}}{% endif %}" />
+				    {% if form.from_address.errors %}
+						<span class="err">{% for error in form.from_address.errors %}{{error}}<br>{% endfor %}<br></span>
+				    {% endif %} 
+					</div>
+				</div>
+			</div>
+			<div class="large-6 columns">
+				<div class="row">
+					<div class="large-12 columns {% if form.text_pager.errors %}error{% endif %}">
+		        <label>Text Pager Address</label>
+		        <div class="sublabel_container"><span class="sublabel">Enter a valid email address that will receive alerts when users submit incident reports.</span></div>
+						<input type="text" name="text_pager" placeholder="Enter a valid email address" maxlength="50" value="{% if form.text_pager.data %}{{form.text_pager.data}}{% else %}{{email_config.0.text_pager}}{% endif %}" />
+				    {% if form.text_pager.errors %}
+						<span class="err">{% for error in form.text_pager.errors %}{{error}}<br>{% endfor %}<br></span>
+				    {% endif %} 
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="spacer_medium"></div>
+
+	  <div class="row">
+	    <div class="large-12 columns">
+        <span class="radius secondary label">Email Text Authoring</span><br>
+      </div>
+    </div>
+
+    <div class="spacer_small"></div>
+
+		<div class="row">
+			<div class="large-12 columns {% if form.incident_greeting.errors %}error{% endif %}">
+				<label>Incident Greeting Text
+				&nbsp;<span id="incident_greeting_counter" class="counter"></span>
+				</label>
+        <div class="sublabel_container"><span class="sublabel">Enter the text that will accompany the initial email sent about an incident.</span></div>
+		 		<textarea id="incident_greeting" name="incident_greeting" placeholder="Enter Incident Greeting" maxlength="1000">{% if form.incident_greeting.data %}{{form.incident_greeting.data}}{% else %}{{email_config.0.incident_greeting}}{% endif %}</textarea>
+		    {% if form.incident_greeting.errors %}
+				<br><span class="err">{% for error in form.incident_greeting.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %} 
+			</div>
+		</div>
+
+		<div class="spacer_small"></div>
+			
+		<div class="row">
+			<div class="large-12 columns {% if form.incident_update.errors %}error{% endif %}">
+        <label>Incident Update Text
+        &nbsp;<span id="incident_update_counter" class="counter"></span>
+      	</label>
+        <div class="sublabel_container"><span class="sublabel">Enter the text that will accompany emails sent about existing incidents.</span></div>
+		 		<textarea id="incident_update" name="incident_update" placeholder="Enter Incident Update" maxlength="1000">{% if form.incident_update.data %}{{form.incident_update.data}}{% else %}{{email_config.0.incident_update}}{% endif %}</textarea>
+		    {% if form.incident_update.errors %}
+				<br><span class="err">{% for error in form.incident_update.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %} 
+			</div>
+		</div>
+
+		<div class="spacer_small"></div>
+
+		<div class="row">
+			<div class="large-12 columns {% if form.maintenance_greeting.errors %}error{% endif %}">
+        <label>Maintenance Greeting Text
+        &nbsp;<span id="maintenance_greeting_counter" class="counter"></span>
+      	</label>
+        <div class="sublabel_container"><span class="sublabel">Enter the text that will accompany the initial email sent about a scheduled maintenance activity.</span></div>
+		 		<textarea id="maintenance_greeting" name="maintenance_greeting" placeholder="Enter Maintenance Greeting" maxlength="1000">{% if form.maintenance_greeting.data %}{{form.maintenance_greeting.data}}{% else %}{{email_config.0.maintenance_greeting}}{% endif %}</textarea>
+		    {% if form.maintenance_greeting.errors %}
+				<br><span class="err">{% for error in form.maintenance_greeting.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %} 
+			</div>
+		</div>
+
+		<div class="spacer_small"></div>
+
+		<div class="row">
+			<div class="large-12 columns {% if form.maintenance_update.errors %}error{% endif %}">
+        <label>Maintenance Update Text
+        &nbsp;<span id="maintenance_update_counter" class="counter"></span>
+      	</label>
+        <div class="sublabel_container"><span class="sublabel">Enter the text that will accompany update emails sent about existing scheduled maintenance activities.</span></div>
+		 		<textarea id="maintenance_update" name="maintenance_update" placeholder="Enter Maintenance Update" maxlength="1000">{% if form.maintenance_update.data %}{{form.maintenance_update.data}}{% else %}{{email_config.0.maintenance_update}}{% endif %}</textarea>
+		    {% if form.maintenance_update.errors %}
+				<br><span class="err">{% for error in form.maintenance_update.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %} 
+			</div>
+		</div>
+
+		<div class="spacer_small"></div>
+
+		<div class="row">
+			<div class="large-12 columns {% if form.email_footer.errors %}error{% endif %}">
+        <label>Email Footer Text
+        &nbsp;<span id="email_footer_counter" class="counter"></span>
+      	</label>
+        <div class="sublabel_container"><span class="sublabel">Enter optional text that will be included in the footer of all emails sent by this system.</span></div>
+		 		<textarea id="email_footer" name="email_footer" placeholder="Enter Email Footer" maxlength="1000">{% if form.email_footer.data %}{{form.email_footer.data}}{% else %}{{email_config.0.email_footer}}{% endif %}</textarea>
+		    {% if form.email_footer.errors %}
+				<br><span class="err">{% for error in form.email_footer.errors %}{{error}}<br>{% endfor %}<br></span>
+		    {% endif %} 
+			</div>
+		</div>
+
+		<div class="spacer_small"></div>
+
+		<div class="row">
+		  <div class="large-12 columns">
+		    <input type="submit" class="small button secondary" value="Save"/>
+		  </div>
+		</div>
+		
+	</div>
+</div>
+
+</form>
+
+
+<script>
+  // Textarea counters
+  $("#incident_greeting").keyup(function(){
+    $("#incident_greeting_counter").text("Characters remaining: " + (1000 - $(this).val().length));
+  });
+
+  $("#incident_update").keyup(function(){
+    $("#incident_update_counter").text("Characters remaining: " + (1000 - $(this).val().length));
+  });
+
+  $("#maintenance_greeting").keyup(function(){
+    $("#maintenance_greeting_counter").text("Characters remaining: " + (1000 - $(this).val().length));
+  });
+
+  $("#maintenance_update").keyup(function(){
+    $("#maintenance_update_counter").text("Characters remaining: " + (1000 - $(this).val().length));
+  });
+
+  $("#email_footer").keyup(function(){
+    $("#email_footer_counter").text("Characters remaining: " + (250 - $(this).val().length));
+  });
+
+</script>
+
+
+{% endblock %}
+
+
+

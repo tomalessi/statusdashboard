@@ -1,0 +1,165 @@
+#
+# Copyright 2013 - Tom Alessi
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# The following two lines are required if an error occurs when creating the Django admin
+# account after running syncdb for the first time.  If the error occurs, delete the database
+# uncomment these two lines and run syncdb again.  You may comment these out after, if desired
+#import os
+#os.environ['LANG'] = 'en_US.UTF-8'
+
+
+DEBUG = False
+TEMPLATE_DEBUG = DEBUG
+
+
+# Set to the fully qualified hostname of the SSD instance or leave as * to match everything (not recommended)
+# This is only required in DJango versions 1.5 and greater (otherwise comment out).
+ALLOWED_HOSTS = ['*']
+
+
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'ssd.dashboard'
+)
+
+
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'ssd.dashboard.middleware.timezone.TimezoneMiddleware',
+)
+
+
+ROOT_URLCONF = 'ssd.urls'
+
+
+# Python dotted path to the WSGI application used by Django's runserver.
+WSGI_APPLICATION = 'ssd.wsgi.application'
+
+
+# Database information - this definition must exist here but the true
+# database settings will reside in local_settings.py
+DATABASES = {
+    'default': {
+        'ENGINE'  : '',
+        'NAME'    : '',         
+        'USER'    : '',       
+        'PASSWORD': '', 
+        'HOST'    : '',
+        'PORT'    : '',         
+    }
+}
+
+
+# Internationalization
+# https://docs.djangoproject.com/en/1.6/topics/i18n/
+
+# Language code for this installation. All choices can be found here:
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'en-us'
+
+# Local time zone for this installation. Choices can be found here:
+# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+# although not all choices may be available on all operating systems.
+# On Unix systems, a value of None will cause Django to use the same
+# timezone as the operating system.
+# If running in a Windows environment this must be set to the same as your
+# system time zone.
+TIME_ZONE = 'US/Pacific'
+
+# If you set this to False, Django will make some optimizations so as not
+# to load the internationalization machinery.
+USE_I18N = True
+
+# If you set this to False, Django will not format dates, numbers and
+# calendars according to the current locale.
+USE_L10N = True
+
+# If you set this to False, Django will not use timezone-aware datetimes.
+USE_TZ = True
+
+
+# Absolute path to the directory static files should be collected to.
+# Don't put anything in this directory yourself; store your static files
+# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Example: "/home/media/media.lawrence.com/static/"
+STATIC_ROOT = ''
+
+
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = '/static/'
+
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'ssd.dashboard.context_processors.prefs',
+    'ssd.dashboard.context_processors.timezones',
+)
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(threadName)s %(thread)d %(message)s'
+        },
+    },
+    'handlers': {
+        'logfile': {
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': '$__app_dir__$/log/ssd.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'ssd': {
+            'handlers': ['logfile'],
+            'level': 'ERROR',
+            'propagate': False
+        },
+    }
+}
+
+
+# Login URL
+LOGIN_URL = '/accounts/login'
+
+# Redirect here after login if contrib.auth.login gets no 'next' parameter
+LOGIN_REDIRECT_URL = '/'
+
+# SSD Version
+execfile('$__app_dir__$/ssd/version.py')
+
+# Load custom settings - must point to your local_settings.py file and
+# may not be a relative path.
+execfile('$__local_dir__$/local_settings.py')
