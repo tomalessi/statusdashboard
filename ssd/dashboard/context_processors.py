@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ def prefs(request):
     else:
         values['app_version'] = False
 
-        
+
     # -- LOGO DISPLAY -- #
     display_logo = cache.get('display_logo')
     if display_logo == None:
@@ -78,7 +78,7 @@ def prefs(request):
         cache.set('enable_ireport', enable_ireport)
     else:
         logger.debug('cache hit: %s' % 'enable_ireport')
-    if enable_ireport == 1:    
+    if enable_ireport == 1:
         values['ireport'] = True
     else:
         values['ireport'] = False

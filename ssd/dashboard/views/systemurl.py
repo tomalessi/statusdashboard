@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 @staff_member_required_ssd
 def systemurl_config(request):
     """Main system url view
- 
+
     """
 
     logger.debug('%s view being executed.' % 'systemurl.systemurl_config')
@@ -50,7 +50,7 @@ def systemurl_config(request):
             # Obtain the cleaned data
             url = form.cleaned_data['url']
             url_enabled = form.cleaned_data['url_enabled']
-        
+
             # There should only ever be one record in this table
             Config_Systemurl.objects.filter(id=Config_Systemurl.objects.values('id')[0]['id']).update(url=url,url_enabled=url_enabled)
 

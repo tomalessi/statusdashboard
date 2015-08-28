@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ def ireport(request):
             else:
                 screenshot1 = ''
                 screenshot2 = ''
-            
+
             # Save the data (if the admin has not setup the upload directory, it'll fail)
             try:
                 Ireport(date=report_time,
@@ -121,7 +121,7 @@ def ireport(request):
             message = Config_Ireport.objects.filter(id=Config_Ireport.objects.values('id')[0]['id']).values('submit_message')[0]['submit_message']
             messages.add_message(request, messages.SUCCESS, message)
             return HttpResponseRedirect('/')
-        
+
         # Invalid form
         else:
             messages.add_message(request, messages.ERROR, 'Invalid data entered, please correct the errors below:')
@@ -146,7 +146,7 @@ def ireport(request):
 @staff_member_required_ssd
 def ireport_config(request):
     """Main system url view
- 
+
     """
 
     logger.debug('%s view being executed.' % 'ireport.ireport_config')
@@ -167,7 +167,7 @@ def ireport_config(request):
             upload_path = form.cleaned_data['upload_path']
             upload_enabled = form.cleaned_data['upload_enabled']
             file_size = form.cleaned_data['file_size']
-        
+
             # There should only ever be one record in this table
             Config_Ireport.objects.filter(id=Config_Ireport.objects.values('id')[0]['id']).update(
                                                   enabled=enabled,
@@ -179,7 +179,7 @@ def ireport_config(request):
                                                   file_size=file_size
                                                   )
 
-            # Clear the cache 
+            # Clear the cache
             cache.delete('enable_ireport')
 
             # Set a success message
@@ -274,7 +274,7 @@ def ireport_delete(request):
 
     # If it's a POST, then we are going to delete it after confirmation
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = DeleteEventForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('DeleteEventForm',form))
@@ -312,12 +312,12 @@ def ireport_delete(request):
         else:
             # Set a message that the delete was not successful
             messages.add_message(request, messages.ERROR, 'Incident report id:%s not deleted' % id)
-            
+
             # Redirect to the incident reports page
             return HttpResponseRedirect('/admin/ireport_list')
 
     # If we get this far, it's a GET and we're looking for confirmation of the delete
-   
+
     # Make sure we have an ID
     form = DeleteEventForm(request.GET)
     logger.debug('Form submit (GET): %s, with result: %s' % ('DeleteEventForm',form))

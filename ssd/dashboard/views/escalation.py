@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ def escalation(request):
 @staff_member_required_ssd
 def escalation_config(request):
     """Main admin index view
- 
+
     """
 
     logger.debug('%s view being executed.' % 'escalation.escalation_config')
@@ -126,14 +126,14 @@ def escalation_config(request):
 @staff_member_required_ssd
 def escalation_contacts(request):
     """View and Add Escalation Contacts
- 
+
     """
 
     logger.debug('%s view being executed.' % 'escalation.escalation_contacts')
 
     # If this is a POST, then validate the form and save the data
     if request.method == 'POST':
-       
+
         # Check the form elements
         form = AddContactForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('AddContactForm',form))
@@ -144,7 +144,7 @@ def escalation_contacts(request):
 
             # Obtain the last entry
             order = Escalation.objects.values('order').order_by('-order')[:1]
-            
+
             # If there are no entries, this will be 1
             if not order:
                 order = 1
@@ -170,10 +170,10 @@ def escalation_contacts(request):
     else:
         # Create a blank form
         form = AddContactForm()
-    
+
     # Obtain all current email addresses
     contacts = Escalation.objects.values('id','order','name','contact_details','hidden').order_by('order')
-   
+
     # Print the page
     return render_to_response(
        'escalation/contacts.html',
@@ -197,34 +197,34 @@ def contact_switch(request):
     # If this is a GET, then validate the form and save the data, otherise send them
     # to the main escalation page
     if request.method == 'GET':
-        
+
         # Check the form elements
         form = SwitchContactForm(request.GET)
         logger.debug('Form submit (GET): %s, with result: %s' % ('SwitchContactForm',form))
 
         if form.is_valid():
             id = form.cleaned_data['id']
-            action = form.cleaned_data['action']    
+            action = form.cleaned_data['action']
 
             # Obtain all id's and orders and put into a dictionary
             orders = Escalation.objects.values('id','order').order_by('order')
-            
+
             # Run through the orders and see if we need to change anything
             # If we are moving up, switch places with the previous
             # If we are moving down, switch places with the next
             # If we are hiding, remove the order
             # If we are unhiding, add to the end
 
-            
+
             # Move this up, meaning decrease the order (only if greater than 1)
             if action == 'up':
 
                 # Get the order
                 id_order = Escalation.objects.filter(id=id).values('order')[0]['order']
-                
+
                 # If the order if greater than 1, move it
                 if id_order > 1:
-                    
+
                     # Get the id of the one before this one so we can switch places with it
                     after_order = id_order - 1
                     after_id = Escalation.objects.filter(order=after_order).values('id')[0]['id']
@@ -235,9 +235,9 @@ def contact_switch(request):
 
                 # Set a success message
                 messages.add_message(request, messages.SUCCESS, 'Escalation contacts successfully modified.')
-            
+
             # Move this down, meaning increase the order
-            elif action == "down": 
+            elif action == "down":
 
                 # Get the order
                 id_order = Escalation.objects.filter(id=id).values('order')[0]['order']
@@ -245,10 +245,10 @@ def contact_switch(request):
                 # If it's already at the bottom, don't do anything
                 # Get a count of contacts
                 contacts_count = Escalation.objects.count()
-                
+
                 # If the order is less than the total, move it down (otherwise it's already at the bottom)
                 if id_order < contacts_count:
-                    
+
                     # Get the id of the one after this one so we can switch places with it
                     after_order = id_order + 1
                     after_id = Escalation.objects.filter(order=after_order).values('id')[0]['id']
@@ -293,7 +293,7 @@ def contact_delete(request):
 
     # If it's a POST, then we are going to delete it after confirmation
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = RemoveContactForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('RemoveContactForm',form))
@@ -329,7 +329,7 @@ def contact_delete(request):
     # Make sure we have an ID
     form = RemoveContactForm(request.GET)
     logger.debug('Form submit (GET): %s, with result: %s' % ('RemoveContactForm',form))
-    
+
     if form.is_valid():
 
         # Obtain the cleaned data
@@ -375,7 +375,7 @@ def contact_modify(request):
 
     # If this is a POST, then validate the form and save the data, otherise do nothing
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = XEditableModifyForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('XEditableModifyForm',form))
@@ -410,6 +410,6 @@ def contact_modify(request):
     else:
         logger.error('%s: Invalid request: GET received but only POST accepted.' % ('escalation.contact_modify'))
         messages.add_message(request, messages.ERROR, 'Invalid request.')
-        return HttpResponseRedirect('/admin/escalation_contacts') 
+        return HttpResponseRedirect('/admin/escalation_contacts')
 
 

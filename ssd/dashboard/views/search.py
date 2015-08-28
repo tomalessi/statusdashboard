@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -92,15 +92,15 @@ def graph(request):
            },
            context_instance=RequestContext(request)
         )
-    
+
     # Invalid form
     else:
         messages.add_message(request, messages.ERROR, 'Invalid graph search query')
-        return HttpResponseRedirect('/') 
+        return HttpResponseRedirect('/')
 
 
 def events(request):
-    """Event List View 
+    """Event List View
 
     Show a listing of all events
 
@@ -134,12 +134,12 @@ def events(request):
             start_tmp = tz.localize(start_tmp)
             end_tmp = tz.localize(end_tmp)
 
-            filter['start__range'] = [start_tmp,end_tmp] 
+            filter['start__range'] = [start_tmp,end_tmp]
 
         # Type
         if type:
             filter['type__type'] = '%s' % type
-        
+
         # Text
         if text:
             filter['description__contains'] = '%s' % text

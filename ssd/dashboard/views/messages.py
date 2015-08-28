@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 @staff_member_required_ssd
 def messages_config(request):
     """Main messages view
- 
+
     """
 
     logger.debug('%s view being executed.' % 'messages.messages_config')
@@ -54,7 +54,7 @@ def messages_config(request):
             alert = form.cleaned_data['alert']
             alert_enabled = form.cleaned_data['alert_enabled']
 
-        
+
             # There should only ever be one record in this table
             Config_Message.objects.filter(id=Config_Message.objects.values('id')[0]['id']).update(
                                                         main=main,

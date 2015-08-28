@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ class email:
         The required format of EmailMessage is as follows:
           - EmailMessage(subject,body,from_email,[to_email],[bcc_email],headers,[cc_email]
           - If there is an error, the user will be notified and an Apache error log will be generated
-          
+
         """
 
         # Obtain the recipient email address
@@ -68,8 +68,8 @@ class email:
         except Exception, e:
             # Log to the error log and return the error to the caller
             logger.error('Error sending text page: %s' % e)
-        
-    
+
+
     def email_event(self,id,email_id,set_timezone,new):
         """
         Send an email message in HTML or TEXT format about a new or existing incident
@@ -141,7 +141,7 @@ class email:
 
 
         # Setup the context and interpolate the values in the template
-        d = Context({ 
+        d = Context({
                      'details':details,
                      'greeting':greeting,
                      'services':services,
@@ -156,11 +156,11 @@ class email:
             # Render the text template
             # If html formatting is requested, we'll render that one later
             rendered_template_txt = get_template('email/email.txt').render(d)
-           
+
             msg = EmailMultiAlternatives(
-                                            email_subject, 
-                                            rendered_template_txt, 
-                                            email_from, 
+                                            email_subject,
+                                            rendered_template_txt,
+                                            email_from,
                                             [recipient]
                                         )
 
@@ -169,7 +169,7 @@ class email:
                 # Render the html template and attach it
                 rendered_template_html = get_template('email/email.html').render(d)
                 msg.attach_alternative(rendered_template_html, "text/html")
-            
+
             # Send the message
             msg.send()
         except Exception, e:
@@ -180,4 +180,3 @@ class email:
         return 'success'
 
 
-    

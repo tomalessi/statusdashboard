@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,14 +36,14 @@ logger = logging.getLogger(__name__)
 @staff_member_required_ssd
 def services(request):
     """View and Add Services
- 
+
     """
 
     logger.debug('%s view being executed.' % 'services.services')
 
     # If this is a POST, then validate the form and save the data
     if request.method == 'POST':
-       
+
         # Check the form elements
         form = AddServiceForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('AddServiceForm',form))
@@ -73,10 +73,10 @@ def services(request):
     else:
         # Create a blank form
         form = AddServiceForm()
-    
+
     # Obtain all current email addresses
     services = Service.objects.values('id','service_name')
-    
+
     # Print the page
     return render_to_response(
        'services/services.html',
@@ -99,7 +99,7 @@ def service_delete(request):
 
     # If it's a POST, then we are going to delete it after confirmation
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = RemoveServiceForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('RemoveServiceForm',form))
@@ -107,7 +107,7 @@ def service_delete(request):
         if form.is_valid():
             id = form.cleaned_data['id']
             # Remove the service
-            
+
             # If this service is currently tied to incidents or maintenances,
             # Do not allow them to be deleted w/o removing them from the relevant
             # services first
@@ -169,7 +169,7 @@ def service_delete(request):
         # Set a message that the delete failed and send back to the services page
         messages.add_message(request, messages.ERROR, 'Invalid request.')
         return HttpResponseRedirect('/admin/services')
-  
+
 
 @staff_member_required_ssd
 def service_modify(request):
@@ -182,7 +182,7 @@ def service_modify(request):
 
     # If this is a POST, then validate the form and save the data, otherise do nothing
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = XEditableModifyForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('XEditableModifyForm',form))
@@ -218,5 +218,5 @@ def service_modify(request):
     else:
         logger.error('%s: Invalid request: GET received but only POST accepted.' % ('services.service_modify'))
         messages.add_message(request, messages.ERROR, 'Invalid request.')
-        return HttpResponseRedirect('/admin/services')     
-    
+        return HttpResponseRedirect('/admin/services')
+

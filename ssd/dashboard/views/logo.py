@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 @staff_member_required_ssd
 def logo_config(request):
     """Main logo view
- 
+
     """
 
     logger.debug('%s view being executed.' % 'logo.logo_config')
@@ -50,11 +50,11 @@ def logo_config(request):
             # Obtain the cleaned data
             url = form.cleaned_data['url']
             logo_enabled = form.cleaned_data['logo_enabled']
-        
+
             # There should only ever be one record in this table
             Config_Logo.objects.filter(id=Config_Logo.objects.values('id')[0]['id']).update(url=url,logo_enabled=logo_enabled)
 
-            # Clear the cache 
+            # Clear the cache
             cache.delete_many(['display_logo','logo_url'])
 
             messages.add_message(request, messages.SUCCESS, 'Preferences saved successfully')

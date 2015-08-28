@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ class EmailConfigForm(forms.Form):
     maintenance_update = forms.CharField(required=False, max_length=1000)
     email_footer = forms.CharField(required=False, max_length=250)
 
-    # Override the form clean method - there is some special logic to validate 
+    # Override the form clean method - there is some special logic to validate
 
     def clean(self):
         cleaned_data = super(EmailConfigForm, self).clean()
@@ -123,7 +123,7 @@ class EmailConfigForm(forms.Form):
             self._errors["maintenance_update"] = self.error_class(['This field is required.'])
 
 
-        # If incident reports are enabled, and email notifications for incident reports are enabled, then a text pager 
+        # If incident reports are enabled, and email notifications for incident reports are enabled, then a text pager
         # recipient must be defined
         ireport_config = Config_Ireport.objects.filter(id=Config_Ireport.objects.values('id')[0]['id']).values('enabled','email_enabled')
         # If email is being enabled without a text pager address and incident reports with email are turned on, error
@@ -148,7 +148,7 @@ class MessagesConfigForm(forms.Form):
     alert_enabled = forms.BooleanField(required=False)
 
 
-    # Override the form clean method - there is some special logic to validate 
+    # Override the form clean method - there is some special logic to validate
     def clean(self):
         cleaned_data = super(MessagesConfigForm, self).clean()
         main = cleaned_data.get('main')
@@ -165,7 +165,7 @@ class MessagesConfigForm(forms.Form):
         if alert_enabled and not alert:
             self._errors["alert"] = self.error_class(['Please enter a system alert'])
             self._errors["alert_enabled"] = self.error_class(['Cannot enable the system alert without defining one'])
-     
+
         # Return the full collection of cleaned data
         return cleaned_data
 
@@ -177,7 +177,7 @@ class LogoConfigForm(forms.Form):
     logo_enabled = forms.BooleanField(required=False)
 
 
-    # Override the form clean method - there is some special logic to validate 
+    # Override the form clean method - there is some special logic to validate
     def clean(self):
         cleaned_data = super(LogoConfigForm, self).clean()
         url = cleaned_data.get('url')
@@ -187,7 +187,7 @@ class LogoConfigForm(forms.Form):
         if logo_enabled and not url:
             self._errors["url"] = self.error_class(['Please enter a logo url'])
             self._errors["logo_enabled"] = self.error_class(['Cannot enable the logo without a logo defined'])
-     
+
         # Return the full collection of cleaned data
         return cleaned_data
 
@@ -199,7 +199,7 @@ class SystemurlConfigForm(forms.Form):
     url_enabled = forms.BooleanField(required=False)
 
 
-    # Override the form clean method - there is some special logic to validate 
+    # Override the form clean method - there is some special logic to validate
     def clean(self):
         cleaned_data = super(SystemurlConfigForm, self).clean()
         url = cleaned_data.get('url')
@@ -209,7 +209,7 @@ class SystemurlConfigForm(forms.Form):
         if url_enabled and not url:
             self._errors["url"] = self.error_class(['Please enter a valid URL'])
             self._errors["url_enabled"] = self.error_class(['Cannot enable the system url without a url defined'])
-     
+
         # Return the full collection of cleaned data
         return cleaned_data
 
@@ -226,7 +226,7 @@ class IreportConfigForm(forms.Form):
     file_size = forms.IntegerField(required=True)
 
 
-    # Override the form clean method - there is some special logic to validate 
+    # Override the form clean method - there is some special logic to validate
     def clean(self):
         cleaned_data = super(IreportConfigForm, self).clean()
         email_enabled = cleaned_data.get('email_enabled')
@@ -238,7 +238,7 @@ class IreportConfigForm(forms.Form):
         if upload_enabled and not upload_path:
             self._errors["upload_path"] = self.error_class(['Please enter a local upload path.'])
             self._errors["upload_enabled"] = self.error_class(['Cannot enable file uploads without defining an upload path.'])
-     
+
         # File size needs to be larger than 0
         if file_size == 0:
             self._errors["file_size"] = self.error_class(['Please enter a file size of at least 1.'])
@@ -406,7 +406,7 @@ class AddIncidentForm(forms.Form):
     broadcast = forms.BooleanField(required=False)
     email_id = forms.IntegerField(required=False)
 
-    # Override the form clean method - there is some special logic to 
+    # Override the form clean method - there is some special logic to
     # adding an incident and we need access to multiple values
     # to do it.
 
@@ -426,7 +426,7 @@ class AddIncidentForm(forms.Form):
         # If there is an end date but not an end time (or vice versa, error)
         if e_date and not e_time:
             self._errors["e_time"] = self.error_class(['You must provide an end time'])
-        
+
         if e_time and not e_date:
             self._errors["e_date"] = self.error_class(['You must provide an end date'])
 
@@ -448,14 +448,14 @@ class AddIncidentForm(forms.Form):
             except Exception:
                 self._errors["e_date"] = self.error_class(['Empty or improperly formatted date or time'])
                 self._errors["e_time"] = self.error_class(['Empty or improperly formatted date or time'])
-                
+
             if start and end:
                 if start > end:
                     self._errors["s_date"] = self.error_class(['End date/time must be after start date/time'])
                     self._errors["s_time"] = self.error_class(['End date/time must be after start date/time'])
                     self._errors["e_date"] = self.error_class(['End date/time must be after start date/time'])
-                    self._errors["e_time"] = self.error_class(['End date/time must be after start date/time'])         
-        
+                    self._errors["e_time"] = self.error_class(['End date/time must be after start date/time'])
+
         # Return the full collection of cleaned data
         return cleaned_data
 
@@ -474,7 +474,7 @@ class UpdateIncidentForm(forms.Form):
     broadcast = forms.BooleanField(required=False)
     email_id = forms.IntegerField(required=False)
 
-    # Override the form clean method - there is some special logic to 
+    # Override the form clean method - there is some special logic to
     # creating an incident and we need access to multiple values
     # to do it.
 
@@ -494,7 +494,7 @@ class UpdateIncidentForm(forms.Form):
         # If there is an end date but not an end time (or vice versa, error)
         if e_date and not e_time:
             self._errors["e_time"] = self.error_class(['You must provide an end time'])
-        
+
         if e_time and not e_date:
             self._errors["e_date"] = self.error_class(['You must provide an end date'])
 
@@ -516,14 +516,14 @@ class UpdateIncidentForm(forms.Form):
             except Exception:
                 self._errors["e_date"] = self.error_class(['Empty or improperly formatted date or time'])
                 self._errors["e_time"] = self.error_class(['Empty or improperly formatted date or time'])
-                
+
             if start and end:
                 if start > end:
                     self._errors["s_date"] = self.error_class(['End date/time must be after start date/time'])
                     self._errors["s_time"] = self.error_class(['End date/time must be after start date/time'])
                     self._errors["e_date"] = self.error_class(['End date/time must be after start date/time'])
-                    self._errors["e_time"] = self.error_class(['End date/time must be after start date/time'])    
-                    
+                    self._errors["e_time"] = self.error_class(['End date/time must be after start date/time'])
+
         # Return the full collection of cleaned data
         return cleaned_data
 
@@ -548,7 +548,7 @@ class AddMaintenanceForm(forms.Form):
     broadcast = forms.BooleanField(required=False)
     email_id = forms.IntegerField(required=False)
 
-    # Override the form clean method - there is some special logic to 
+    # Override the form clean method - there is some special logic to
     # scheduling a maintenance and we need access to multiple values
     # to do it.
 
@@ -565,7 +565,7 @@ class AddMaintenanceForm(forms.Form):
         # If email broadcast is selected, an email address also must be
         if broadcast and not email_id:
             self._errors["broadcast"] = self.error_class(['Cannot broadcast if no address selected.'])
-        
+
         # Ensure the end date/time is not before the start date/time
         start,end = None,None
         try:
@@ -581,12 +581,12 @@ class AddMaintenanceForm(forms.Form):
         except Exception:
             self._errors["e_date"] = self.error_class(['Empty or improperly formatted date or time'])
             self._errors["e_time"] = self.error_class(['Empty or improperly formatted date or time'])
-            
+
         if start and end:
             if start > end:
                 self._errors["s_date"] = self.error_class(['End date/time must be after start date/time'])
                 self._errors["e_date"] = self.error_class(['End date/time must be after start date/time'])
-        
+
         # Return the full collection of cleaned data
         return cleaned_data
 
@@ -608,7 +608,7 @@ class UpdateMaintenanceForm(forms.Form):
     completed = forms.CharField(required=False)
     broadcast = forms.BooleanField(required=False)
     email_id = forms.IntegerField(required=False)
-    
+
 
     # Override the form clean method - to validate the special logic in this form
     def clean(self):
@@ -626,14 +626,14 @@ class UpdateMaintenanceForm(forms.Form):
         if broadcast and not email_id:
             # Set custom error messages
             self._errors["broadcast"] = self.error_class(['Cannot broadcast if no address selected.'])
-        
+
         # If its completed, make sure its started
         if completed and not started:
             # Set custom error messages
             self._errors['completed'] = self.error_class(['Maintenance cannot be completed if not started.'])
 
         # Ensure the end date/time is not before the start date/time
-        
+
         start,end = None,None
         try:
             # Combine the dates and times into datetime objects (improperly formated dates/times will cause exceptions)
@@ -648,7 +648,7 @@ class UpdateMaintenanceForm(forms.Form):
         except Exception:
             self._errors["e_date"] = self.error_class(['Empty or improperly formatted date or time'])
             self._errors["e_time"] = self.error_class(['Empty or improperly formatted date or time'])
-            
+
         if start and end:
             if start > end:
                 self._errors["s_date"] = self.error_class(['End date/time must be after start date/time'])
@@ -659,4 +659,3 @@ class UpdateMaintenanceForm(forms.Form):
 
 
 
-        

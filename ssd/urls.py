@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ urlpatterns = patterns('',
     # Standard Django admin site
     url(r'^djadmin/',                       include(admin.site.urls)),
 
-    # SSD Admin 
+    # SSD Admin
     url(r'^admin$',                         'ssd.dashboard.views.admin.main'),
     url(r'^admin/admin_config$',            'ssd.dashboard.views.admin.admin_config'),
     url(r'^admin/cache_status$',            'ssd.dashboard.views.admin.cache_status'),
@@ -67,7 +67,7 @@ urlpatterns = patterns('',
     url(r'^admin/i_list$',                  'ssd.dashboard.views.incidents.i_list'),
     url(r'^admin/i_update$',                'ssd.dashboard.views.incidents.i_update'),
     url(r'^admin/i_update_delete$',         'ssd.dashboard.views.incidents.i_update_delete'),
-    
+
     # Maintenance Events (admin functionality)
     url(r'^admin/maintenance$',             'ssd.dashboard.views.maintenance.maintenance'),
     url(r'^admin/m_delete$',                'ssd.dashboard.views.maintenance.m_delete'),
@@ -81,7 +81,7 @@ urlpatterns = patterns('',
     url(r'^admin/email_recipients$',        'ssd.dashboard.views.email.email_recipients'),
     url(r'^admin/recipient_delete$',        'ssd.dashboard.views.email.recipient_delete'),
     url(r'^admin/recipient_modify$',        'ssd.dashboard.views.email.recipient_modify'),
- 
+
     # Services Configuration (admin functionality)
     url(r'^admin/services$',                'ssd.dashboard.views.services.services'),
     url(r'^admin/service_delete$',          'ssd.dashboard.views.services.service_delete'),

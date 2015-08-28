@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ class Status(models.Model):
         - completed (maintenance only)
 
     """
-    
+
     status = models.CharField(max_length=10, unique=True)
 
 
@@ -248,4 +248,3 @@ class Ireport(models.Model):
     screenshot1 = models.ImageField(null=False, blank=True, storage=fs, upload_to=_upload_to)
     screenshot2 = models.ImageField(null=False, blank=True, storage=fs, upload_to=_upload_to)
 
-    

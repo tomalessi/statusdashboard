@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ def update_modify(request):
 
     # If this is a POST, then validate the form and save the data, otherise do nothing
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = XEditableModifyForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('XEditableModifyForm',form))
@@ -70,7 +70,7 @@ def update_modify(request):
                 logger.error('%s: Error saving update: %s' % ('events.update_modify',e))
                 return HttpResponseBadRequest('An error was encountered with this request.')
 
-            # Clear the cache 
+            # Clear the cache
             cache.delete('timeline')
 
             return HttpResponse('Value successfully modified')
@@ -81,4 +81,4 @@ def update_modify(request):
     else:
         logger.error('%s: Invalid request: GET received but only POST accepted.' % ('events.update_modify'))
         messages.add_message(request, messages.ERROR, 'Invalid request.')
-        return HttpResponseRedirect('/admin') 
+        return HttpResponseRedirect('/admin')

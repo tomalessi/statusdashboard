@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 
 """SSD Install Script
-   
+
    Requirements
     - SSD source downloaded from http://code.google.com/p/system-status-dashboard
 
@@ -50,7 +50,7 @@ def create_log(app_dir,apache_uid):
             shutil.rmtree('%s/log' % app_dir)
         except Exception as e:
             terminate(e)
- 
+
     try:
         os.makedirs('%s/log' % app_dir)
     except Exception as e:
@@ -83,7 +83,7 @@ def customize_settings(app_dir,dst_local):
         # Write out the new file
         f_sp = open('%s/ssd/settings.py' % app_dir,'w')
         f_sp.write(s_sp)
-        f_sp.close() 
+        f_sp.close()
     except Exception, e:
         terminate(e)
 
@@ -112,7 +112,7 @@ def customize_local_settings(db_user,db_pass,db_host,db_port,dst_local,app_dir,a
         # Write out the new file
         f_ls = open('%s/local_settings.py' % dst_local,'w')
         f_ls.write(s_ls)
-        f_ls.close() 
+        f_ls.close()
 
         # Set permissions to 600 and ownership apache_uid:root
         os.chown('%s/local_settings.py' % dst_local,int(apache_uid),-1)
@@ -148,7 +148,7 @@ def customize_wsgi_conf(app_dir,django_admin,dst_local,wsgi_dir,upload_dir):
         # Write out the new file
         f_wc = open('%s/wsgi.conf' % dst_local,'w')
         f_wc.write(s_wc)
-        f_wc.close() 
+        f_wc.close()
     except Exception, e:
         terminate(e)
 
@@ -185,7 +185,7 @@ def customize_wsgi_py(app_dir,dst_local):
         # Write out the new file
         f_wp = open('%s/wsgi.py' % dst_local,'w')
         f_wp.write(s_wp)
-        f_wp.close() 
+        f_wp.close()
     except Exception, e:
         terminate(e)
 
@@ -229,7 +229,7 @@ def split_directories(ssd_src):
 
     # Determine the source and application directory names
     src_match = re.search('^\/(\S+\/)*(\S+)$',ssd_src)
-    
+
     if src_match is None:
         terminate('The SSD source directory could not be determined.')
 
@@ -266,7 +266,7 @@ def copy_local(src_local,dst_local):
 def install():
     """Perform fresh install of SSD"""
 
-    print 'PERFORMING FRESH INSTALL:\n'  
+    print 'PERFORMING FRESH INSTALL:\n'
 
     # SOURCE DIRECTORY
     ssd_source = re.search('^(\S+)\/src\/install$',os.getcwd())
@@ -304,22 +304,22 @@ def install():
     # DB PORT
     db_port=raw_input('7: Enter the database port\n#>').strip()
     print 'Database port set to: %s\n' % db_port
-    
+
     # DJANGO ADMIN DIRECTORY
     django_path = re.search('^\[\'(\S+)\'\]',str(django.__path__))
     if django_path:
         django_admin_path = '%s/contrib/admin/static/admin' % django_path.group(1)
     else:
         django_admin_path = 'ERROR: django path could not be automatically determined, enter manually'
-    
+
     django_admin=raw_input('8: Enter the path to the DJango admin static files [%s]\n#>' % django_admin_path).strip()
     django_admin = django_admin or django_admin_path
     print 'DJango admin static files set to: %s\n' % django_admin
-    
+
     # APACHE UID
     apache_uid=raw_input('9: Enter the uid of the Apache user\n#>').strip()
     print 'Apache uid set to: %s\n' % apache_uid
-    
+
     # APACHE WSGI MODULE DIRECTORY
     # Search for it?
     mod_wsgi_search = raw_input('The location of the apache mod_wsgi.so module is required, search for it (y/n)?\n#>').strip()
@@ -337,7 +337,7 @@ def install():
             mod_wsgi_path = 'ERROR: mod_wsgi.so path unknown, enter manually'
     else:
         mod_wsgi_path = 'ERROR: mod_wsgi.so path unknown, enter manually'
-    
+
     wsgi_dir=raw_input('10: Enter the path to the Apache mod_wsgi.so module [%s]\n#>' % mod_wsgi_path).strip()
     wsgi_dir = wsgi_dir or mod_wsgi_path
     print 'Apache mod_wsgi directory set to: %s\n' % wsgi_dir
@@ -345,7 +345,7 @@ def install():
     # SCREENSHOT UPLOAD DIRECTORY
     default_upload_dir = '/opt/ssd-local'
     upload_dir=raw_input('11: Enter the path to the screenshot upload directory [%s]\n#>' % default_upload_dir).strip()
-    upload_dir = upload_dir or default_upload_dir 
+    upload_dir = upload_dir or default_upload_dir
     print 'Upload directory set to: %s\n' % upload_dir
 
     install_text = """You have entered the following options:\n
@@ -375,7 +375,7 @@ def install():
     # Write out the install file for debugging issues later
     install_file = open('install.txt','w')
     install_file.write(install_text)
-    install_file.close() 
+    install_file.close()
 
     # Determine the SSD source directory and path
     app_dir,ssd_src_dir = split_directories(ssd_src)
@@ -418,7 +418,7 @@ def install():
 def upgrade():
     """Perform an upgrade of SSD"""
 
-    print 'PERFORMING SSD UPGRADE:\n'  
+    print 'PERFORMING SSD UPGRADE:\n'
 
     # SOURCE DIRECTORY
     ssd_source = re.search('^(\S+)\/src\/install$',os.getcwd())
@@ -460,7 +460,7 @@ def upgrade():
     # Write out the upgrade file for debugging issues later
     upgrade_file = open('upgrade.txt','w')
     upgrade_file.write(upgrade_text)
-    upgrade_file.close() 
+    upgrade_file.close()
 
     # Determine the SSD source directory and path
     app_dir,ssd_src_dir = split_directories(ssd_src)

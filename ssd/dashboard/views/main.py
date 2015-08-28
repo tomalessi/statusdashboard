@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ def index(request):
     # is different than the reference date we use for the calendar
     # because the query needs to go through 23:59:59
     ref_q = ref + ' 23:59:59'
-    # If the reference date is not in the proper form, provide an error and redirect to the 
+    # If the reference date is not in the proper form, provide an error and redirect to the
     # standard homepage
     try:
         ref_q = datetime.datetime.strptime(ref_q,'%Y-%m-%d %H:%M:%S')
@@ -78,14 +78,14 @@ def index(request):
         # Set an error message
         messages.add_message(request, messages.ERROR, 'Improperly formatted reference date.')
         # Redirect to the homepage
-        return HttpResponseRedirect('/') 
+        return HttpResponseRedirect('/')
     ref_q = pytz.timezone(request.timezone).localize(ref_q)
 
     # The reference date is the last date displayed in the calendar
     # so add that and create a datetime object in the user's timezone
     # (or the server timezone if its not set)
     ref += ' 00:00:00'
-    ref = datetime.datetime.strptime(ref,'%Y-%m-%d %H:%M:%S') 
+    ref = datetime.datetime.strptime(ref,'%Y-%m-%d %H:%M:%S')
     ref = pytz.timezone(request.timezone).localize(ref)
 
     # Obtain the current 7 days
@@ -98,7 +98,7 @@ def index(request):
        # Add each date
        dates.append(delta)
        headings.append(delta)
- 
+
     # Add the ref date
     dates.append(ref)
     headings.append(ref)
@@ -125,19 +125,19 @@ def index(request):
     #                                        '1': {
     #                                               'start':'2013-01-01 10:28:25 PDT',
     #                                               'description':'We are having an issue with the exchange server',
-    #                                               'services':['service1','service2'],                                
+    #                                               'services':['service1','service2'],
     #                                               'updates': [
     #                                                            ['2013-01-01 10:29:25 PDT','We are having an issue'],
     #                                                            ['2013-01-01 10:30:25 PDT','Resolved now']
     #                                                           ]
     #                                              }
     #                                       },
-    #                            
+    #
     #                            maintenance':{
     #                                           '5': {
     #                                                  'start':'2013-01-01 10:28:25 PDT',
     #                                                  'description':'We are having an issue with the exchange server',
-    #                                                  'services':['service1','service2'],                                
+    #                                                  'services':['service1','service2'],
     #                                                  'updates': [
     #                                                               ['2013-01-01 10:29:25 PDT','We are having an issue'],
     #                                                               ['2013-01-01 10:30:25 PDT','Resolved now']
@@ -158,7 +158,7 @@ def index(request):
     #                                            }
     #                         }
     #            }
-    #          
+    #
     timeline = cache.get('timeline')
     if timeline == None:
         logger.debug('cache miss: %s' % 'timeline')
@@ -172,7 +172,7 @@ def index(request):
                     }
         }
 
-        
+
         # Get the events
         timeline_events = Event.objects.filter(Q(status__status='open') | Q(status__status='started')).values('id','start','type__type','description').order_by('start')
 
@@ -182,7 +182,7 @@ def index(request):
             # Add the type to the timeline if not there
             if not event['type__type'] in timeline['events']:
                 timeline['events'][event['type__type']] = {}
-            
+
             # Add the event id to the timeline if not there
             if not event['id'] in timeline['events'][event['type__type']]:
                 timeline['events'][event['type__type']][event['id']] = {}
@@ -202,7 +202,7 @@ def index(request):
             for service in services_impacted:
 
                 if not service['event_service__service__service_name'] in timeline['lookup'][event['type__type']]:
-                    timeline['lookup'][event['type__type']][service['event_service__service__service_name']] = ''            
+                    timeline['lookup'][event['type__type']][service['event_service__service__service_name']] = ''
 
         # Now get the updates
         timeline_updates = Event_Update.objects.filter(Q(event_id__status__status='open') | Q(event_id__status__status='started')).values('event_id','event_id__type__type','date','update').order_by('id')
@@ -220,7 +220,7 @@ def index(request):
         cache.set('timeline', timeline)
     else:
         logger.debug('cache hit: %s' % 'timeline')
-    
+
     # END ACTIVE INCIDENT INFORMATION
     # -------------------------------------------------------- #
 
@@ -256,7 +256,7 @@ def index(request):
 
 
     # Grab all events within the time range requested (for the specific time range):
-    # 
+    #
     # The memcache key will be:
     # events_[ns]_[from]_[to]
     #
@@ -265,7 +265,7 @@ def index(request):
     events_ns = functions.namespace_get(logger, 'events_ns')
     events_key = 'events_%s_%s_%s' % (events_ns,dates[0].strftime('%Y%m%d%Z'),ref.strftime('%Y%m%d%Z'))
     logger.debug('events key: %s' % events_key)
-    
+
     events = cache.get(events_key)
     if events == None:
         logger.debug('cache miss: %s' % events_key)
@@ -335,18 +335,18 @@ def index(request):
                                  'status':event['status__status']
                                  }
                         row_event.append(e)
-            
+
             # If the row_event is empty, this indicates there were no incidents so mark this date/service as green
             if not row_event:
                 row_event.append('green')
-                
+
 
             # Add the event row to the main row
             row.append(row_event)
 
         # Add the main row to our data dict
         data.append(row)
-    
+
     # END MAIN DASHBOARD TABLE INFORMATION
     # -------------------------------------------------------- #
 
@@ -356,9 +356,9 @@ def index(request):
     #
     # The reference date is set to midnight of the day, in the user's timezone
     #
-    # First populate all of the dates into an array so we can iterate through 
+    # First populate all of the dates into an array so we can iterate through
     graph_dates = []
-    
+
     # The back dates (including today)
     day_range = 15
     counter = day_range
@@ -379,7 +379,7 @@ def index(request):
         counter += 1
 
 
-    # Obtain the back and forward dates for the query    
+    # Obtain the back and forward dates for the query
     back = datetime.timedelta(days=day_range)
     back_date = ref - back
     forward = datetime.timedelta(days=day_range)
@@ -423,7 +423,7 @@ def index(request):
 
         # Add the tuple
         count_data.append(t)
-    
+
     # END GRAPH COUNT DATA
     # -------------------------------------------------------- #
 
@@ -470,5 +470,4 @@ def index(request):
        },
        context_instance=RequestContext(request)
     )
-    
-   
+

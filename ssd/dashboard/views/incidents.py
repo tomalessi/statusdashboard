@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ def incident(request):
                 # Status is still open
                 status='open'
 
-            # Create the event and obtain the ID                                     
+            # Create the event and obtain the ID
             e = Event.objects.create(
                                      type_id=Type.objects.filter(type='incident').values('id')[0]['id'],
                                      description=description,
@@ -99,8 +99,8 @@ def incident(request):
             event_id = e.pk
 
             # Add the email recipient, if requested.
-            # Form validation ensures that a valid email is selected if broadcast is selected.  
-            if broadcast: 
+            # Form validation ensures that a valid email is selected if broadcast is selected.
+            if broadcast:
                 Event_Email(event_id=event_id,email_id=email_id).save()
 
             # Find out which services this impacts and associate the services with the event
@@ -120,7 +120,7 @@ def incident(request):
 
             # Clear the cache - don't discriminate and just clear everything that impacts events
             cache.delete_many(['timeline','events_ns','event_count_ns'])
-            
+
             # Set a success message
             messages.add_message(request, messages.SUCCESS, 'Incident successfully created.')
 
@@ -214,13 +214,13 @@ def i_update(request):
                 # Status is still open
                 status='open'
 
-            # Update the event                                     
+            # Update the event
             Event.objects.filter(id=id).update(
                                      description=description,
                                      status=Status.objects.filter(status=status).values('id')[0]['id'],
                                      start=start,
                                      end=end)
-            
+
             # Add the update, if there is one, using the current time
             if update:
                 # Create a datetime object for right now and add the server's timezone (whatever DJango has)
@@ -231,16 +231,16 @@ def i_update(request):
             # Add the email recipient.  If an email recipient is missing, then the broadcast email will not be checked.
             # In both cases, delete the existing email (because it will be re-added)
             Event_Email.objects.filter(event_id=id).delete()
-            if email_id: 
+            if email_id:
                 Event_Email(event_id=id,email_id=email_id).save()
 
             # See if we are adding or subtracting services
-            # The easiest thing to do here is remove all affected  
+            # The easiest thing to do here is remove all affected
             # services and re-add the ones indicated here
 
             # Remove first
             Event_Service.objects.filter(event_id=id).delete()
-    
+
             # Now add (form validation confirms that there is at least 1)
             for service_id in affected_svcs:
                 # Should be number only -- can't figure out how to validate
@@ -263,32 +263,32 @@ def i_update(request):
             # All done so redirect to the incident detail page so
             # the new data can be seen.
             return HttpResponseRedirect('/i_detail?id=%s' % id)
-        
+
         else:
             messages.add_message(request, messages.ERROR, 'Invalid data entered, please correct the errors below:')
 
             # Obtain the id so we can print the update page again
-            if 'id' in request.POST: 
+            if 'id' in request.POST:
                 if re.match(r'^\d+$', request.POST['id']):
                     id = request.POST['id']
                 else:
                     messages.add_message(request, messages.ERROR, 'Improperly formatted incident ID - cannot update incident')
-                    return HttpResponseRedirect('/admin') 
+                    return HttpResponseRedirect('/admin')
             else:
-                messages.add_message(request, messages.ERROR, 'No incident ID given - cannot update incident') 
+                messages.add_message(request, messages.ERROR, 'No incident ID given - cannot update incident')
                 return HttpResponseRedirect('/admin')
 
     # Not a POST so create a blank form
     else:
-        # Obtain the id 
-        if 'id' in request.GET: 
+        # Obtain the id
+        if 'id' in request.GET:
             if re.match(r'^\d+$', request.GET['id']):
                 id = request.GET['id']
             else:
                 messages.add_message(request, messages.ERROR, 'Improperly formatted incident ID - cannot update incident')
                 return HttpResponseRedirect('/admin')
         else:
-            messages.add_message(request, messages.ERROR, 'No incident ID given - cannot update incident') 
+            messages.add_message(request, messages.ERROR, 'No incident ID given - cannot update incident')
             return HttpResponseRedirect('/admin')
 
         # In the case of a GET, we can acquire the proper services from the DB
@@ -297,7 +297,7 @@ def i_update(request):
         for service_id in affected_svcs_tmp:
             affected_svcs.append(service_id['event_service__service_id'])
         affected_svcs = list(affected_svcs)
-        
+
         # Create a blank form
         form = UpdateIncidentForm()
 
@@ -356,7 +356,7 @@ def i_delete(request):
 
     # If it's a POST, then we are going to delete it after confirmation
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = DeleteEventForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('DeleteEventForm',form))
@@ -379,16 +379,16 @@ def i_delete(request):
         else:
             # Set a message that the delete was not successful
             messages.add_message(request, messages.ERROR, 'Incident id:%s not deleted' % id)
-            
+
         # Redirect to the open incidents page
         return HttpResponseRedirect('/admin/i_list')
 
     # If we get this far, it's a GET
-   
+
     # Make sure we have an ID
     form = DeleteEventForm(request.GET)
     logger.debug('Form submit (GET): %s, with result: %s' % ('DeleteEventForm',form))
-    
+
     if form.is_valid():
 
         # Obtain the cleaned data
@@ -432,7 +432,7 @@ def i_detail(request):
 
     # Bad form
     else:
-        messages.add_message(request, messages.ERROR, 'Improperly formatted incident ID, cannot display incident detail') 
+        messages.add_message(request, messages.ERROR, 'Improperly formatted incident ID, cannot display incident detail')
         return HttpResponseRedirect('/')
 
     # Obain the incident detail (and make sure it's an incident)
@@ -542,7 +542,7 @@ def i_update_delete(request):
 
     # If it's a POST, then we are going to delete it after confirmation
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = DeleteUpdateForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('DeleteUpdateForm',form))
@@ -556,7 +556,7 @@ def i_update_delete(request):
             # Delete the event update
             Event_Update.objects.filter(id=id).delete()
 
-            # Clear the cache 
+            # Clear the cache
             cache.delete('timeline')
 
             # Set a message that the delete was successful
@@ -566,16 +566,16 @@ def i_update_delete(request):
         else:
             # Set a message that the delete was not successful
             messages.add_message(request, messages.ERROR, 'Incident update id:%s not deleted' % id)
-            
+
         # Redirect back to the incident page
         return HttpResponseRedirect('/admin/i_update?id=%s' % event_id)
 
     # If we get this far, it's a GET
-   
+
     # Make sure we have an ID
     form = DeleteUpdateForm(request.GET)
     logger.debug('Form submit (GET): %s, with result: %s' % ('DeleteUpdateForm',form))
-    
+
     if form.is_valid():
 
         # Obtain the cleaned data

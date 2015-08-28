@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ def maintenance(request):
             coordinator = form.cleaned_data['coordinator']
             broadcast = form.cleaned_data['broadcast']
             email_id = form.cleaned_data['email_id']
-                        
+
             # Combine the dates and times into datetime objects
             start = datetime.datetime.combine(s_date, s_time)
             end = datetime.datetime.combine(e_date, e_time)
@@ -81,8 +81,8 @@ def maintenance(request):
             tz = pytz.timezone(request.timezone)
             start = tz.localize(start)
             end = tz.localize(end)
-            
-            # Create the event and obtain the ID                                     
+
+            # Create the event and obtain the ID
             e = Event.objects.create(type_id=Type.objects.filter(type='maintenance').values('id')[0]['id'],
                                      description=description,
                                      status_id=Status.objects.filter(status='planning').values('id')[0]['id'],
@@ -99,7 +99,7 @@ def maintenance(request):
             Event_Coordinator(event_id=event_id,coordinator=coordinator).save()
 
             # Add the email recipient, if requested
-            if email_id: 
+            if email_id:
                 Event_Email(event_id=event_id,email_id=email_id).save()
 
             # Find out which services this impacts and associate the services with the event
@@ -118,7 +118,7 @@ def maintenance(request):
 
             # Clear the cache - don't discriminate and just clear everything that impacts events
             cache.delete_many(['timeline','events_ns','event_count_ns'])
-            
+
             # Set a success message
             messages.add_message(request, messages.SUCCESS, 'Maintenance successfully created.')
 
@@ -134,16 +134,16 @@ def maintenance(request):
 
         # There are no affected services selected yet
         affected_svcs = []
-        
+
         # Create a blank form
-        form = AddMaintenanceForm() 
-    
+        form = AddMaintenanceForm()
+
     # Obtain all current email addresses
     emails = Email.objects.values('id','email')
 
     # Obtain all services
     services = Service.objects.values('id','service_name').order_by('service_name')
-    
+
     # Print the page
     return render_to_response(
        'maintenance/maintenance.html',
@@ -219,7 +219,7 @@ def m_update(request):
             else:
                 status='planning'
 
-            # Update the event                                     
+            # Update the event
             Event.objects.filter(id=id).update(
                                      description=description,
                                      status=Status.objects.filter(status=status).values('id')[0]['id'],
@@ -253,19 +253,19 @@ def m_update(request):
 
 
             # See if we are adding or subtracting services
-            # The easiest thing to do here is remove all affected  
+            # The easiest thing to do here is remove all affected
             # services and re-add the ones indicated here
 
             # Remove first
             Event_Service.objects.filter(event_id=id).delete()
-    
+
             # Now add (form validation confirms that there is at least 1)
             for service_id in affected_svcs:
                 # Should be number only -- can't figure out how to validate
                 # multiple checkboxes in the form
                 if re.match(r'^\d+$', service_id):
                     Event_Service(event_id=id,service_id=service_id).save()
-           
+
             # Send an email notification to the appropriate list about this maintenance, if requested.  Broadcast won't be
             # allowed to be true if an email address is not defined or if global email is disabled.
             if Config_Email.objects.filter(id=Config_Email.objects.values('id')[0]['id']).values('enabled')[0]['enabled'] == 1 and broadcast:
@@ -281,33 +281,33 @@ def m_update(request):
             # All done so redirect to the maintenance detail page so
             # the new data can be seen.
             return HttpResponseRedirect('/m_detail?id=%s' % id)
-    
+
         else:
             messages.add_message(request, messages.ERROR, 'Invalid data entered, please correct the errors below:')
 
             # Obtain the id so we can print the update page again
-            if 'id' in request.POST: 
+            if 'id' in request.POST:
                 if re.match(r'^\d+$', request.POST['id']):
                     id = request.POST['id']
                 else:
                     messages.add_message(request, messages.ERROR, 'Improperly formatted maintenance ID - cannot update maintenance')
-                    return HttpResponseRedirect('/admin') 
+                    return HttpResponseRedirect('/admin')
             else:
-                messages.add_message(request, messages.ERROR, 'No maintenance ID given - cannot update maintenance') 
+                messages.add_message(request, messages.ERROR, 'No maintenance ID given - cannot update maintenance')
                 return HttpResponseRedirect('/admin')
 
     # Not a POST
     else:
 
-        # Obtain the id 
-        if 'id' in request.GET: 
+        # Obtain the id
+        if 'id' in request.GET:
             if re.match(r'^\d+$', request.GET['id']):
                 id = request.GET['id']
             else:
                 messages.add_message(request, messages.ERROR, 'Improperly formatted maintenance ID - cannot update maintenance')
-                return HttpResponseRedirect('/admin') 
+                return HttpResponseRedirect('/admin')
         else:
-            messages.add_message(request, messages.ERROR, 'No maintenance ID given - cannot update maintenance') 
+            messages.add_message(request, messages.ERROR, 'No maintenance ID given - cannot update maintenance')
             return HttpResponseRedirect('/admin')
 
         # In the case of a GET, we can acquire the proper services from the DB
@@ -350,16 +350,16 @@ def m_update(request):
     # Set the timezone
     start = start.astimezone(pytz.timezone(request.timezone))
     end = end.astimezone(pytz.timezone(request.timezone))
-    
+
     # Format the start/end date/time
-    s_date = start.strftime("%Y-%m-%d")   
+    s_date = start.strftime("%Y-%m-%d")
     s_time = start.strftime("%H:%M")
     e_date = end.strftime("%Y-%m-%d")
     e_time = end.strftime("%H:%M")
 
     # Obtain any updates
     updates = Event_Update.objects.filter(event_id=id).values('id','date','update').order_by('id')
-    
+
     # Print the page
     return render_to_response(
        'maintenance/m_update.html',
@@ -403,7 +403,7 @@ def m_detail(request):
 
     # Bad form
     else:
-        messages.add_message(request, messages.ERROR, 'Improperly formatted maintenance ID, cannot display maintenance detail') 
+        messages.add_message(request, messages.ERROR, 'Improperly formatted maintenance ID, cannot display maintenance detail')
         return HttpResponseRedirect('/')
 
     # Obain the maintenance detail (and make sure it's a maintenance)
@@ -450,7 +450,7 @@ def m_detail(request):
        },
        context_instance=RequestContext(request)
     )
-    
+
 
 @staff_member_required_ssd
 def m_email(request):
@@ -503,7 +503,7 @@ def m_delete(request):
 
     # If it's a POST, then we are going to delete it after confirmation
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = DeleteEventForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('DeleteEventForm',form))
@@ -532,11 +532,11 @@ def m_delete(request):
         return HttpResponseRedirect('/admin/m_list')
 
     # If we get this far, it's a GET
-   
+
     # Make sure we have an ID
     form = DeleteEventForm(request.GET)
     logger.debug('Form submit (GET): %s, with result: %s' % ('DeleteEventForm',form))
-    
+
     if form.is_valid():
 
         # Obtain the cleaned data
@@ -560,9 +560,9 @@ def m_delete(request):
         # Set a message that the delete failed and send back to the maintenance page
         messages.add_message(request, messages.ERROR, 'Invalid request.')
         return HttpResponseRedirect('/admin/m_list')
-   
 
-@staff_member_required_ssd   
+
+@staff_member_required_ssd
 def m_list(request):
     """Maintenance List View
 
@@ -628,7 +628,7 @@ def m_update_delete(request):
 
     # If it's a POST, then we are going to delete it after confirmation
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = DeleteUpdateForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('DeleteUpdateForm',form))
@@ -642,7 +642,7 @@ def m_update_delete(request):
             # Delete the event update
             Event_Update.objects.filter(id=id).delete()
 
-            # Clear the cache 
+            # Clear the cache
             cache.delete('timeline')
 
             # Set a message that the delete was successful
@@ -652,16 +652,16 @@ def m_update_delete(request):
         else:
             # Set a message that the delete was not successful
             messages.add_message(request, messages.ERROR, 'Maintenance update id:%s not deleted' % id)
-            
+
         # Redirect back to the incident page
         return HttpResponseRedirect('/admin/m_update?id=%s' % event_id)
 
     # If we get this far, it's a GET
-   
+
     # Make sure we have an ID
     form = DeleteUpdateForm(request.GET)
     logger.debug('Form submit (GET): %s, with result: %s' % ('DeleteUpdateForm',form))
-    
+
     if form.is_valid():
 
         # Obtain the cleaned data

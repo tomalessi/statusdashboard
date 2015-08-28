@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
       (note: database host/port can be ignored if its local and using the standard port)
     - Secret key
     - Full path to template directory
-   
+
 """
 
 
@@ -30,13 +30,13 @@ DATABASES = {
     'default': {
         'ENGINE'   : 'django.db.backends.mysql',
         'NAME'     : 'ssd',
-        'USER'     : '$__db_user__$',    
-        'PASSWORD' : '$__db_pass__$', 
-        'HOST'     : '$__db_host__$', 
+        'USER'     : '$__db_user__$',
+        'PASSWORD' : '$__db_pass__$',
+        'HOST'     : '$__db_host__$',
     }
 }
 SECRET_KEY = '$__secret_key__$'
-TEMPLATE_DIRS = ( 
+TEMPLATE_DIRS = (
     '$__app_dir__$/templates',
 )
 

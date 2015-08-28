@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 @staff_member_required_ssd
 def email_config(request):
     """Main admin index view
- 
+
     """
 
     logger.debug('%s view being executed.' % 'email.email_config')
@@ -59,7 +59,7 @@ def email_config(request):
             maintenance_greeting = form.cleaned_data['maintenance_greeting']
             maintenance_update = form.cleaned_data['maintenance_update']
             email_footer = form.cleaned_data['email_footer']
-        
+
 
             # There should only ever be one record in this table
             Config_Email.objects.filter(id=Config_Email.objects.values('id')[0]['id']).update(
@@ -115,20 +115,20 @@ def email_config(request):
 @staff_member_required_ssd
 def email_recipients(request):
     """Manage Recipient Email Addresses
- 
+
     """
 
     logger.debug('%s view being executed.' % 'email.email_recipients')
 
     # If this is a POST, then validate the form and save the data
     if request.method == 'POST':
-       
+
         # Check the form elements
         form = AddRecipientForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('AddRecipientForm',form))
 
         if form.is_valid():
-            
+
             email = form.cleaned_data['email']
 
             # Don't allow duplicates
@@ -136,9 +136,9 @@ def email_recipients(request):
                 Email(email=email).save()
             except IntegrityError:
                 pass
-            
+
             messages.add_message(request, messages.SUCCESS, 'Recipient saved successfully')
-            
+
             # Send them back so they can see the newly created email addresses
             return HttpResponseRedirect('/admin/email_recipients')
         else:
@@ -148,10 +148,10 @@ def email_recipients(request):
     else:
         # Create a blank form
         form = AddRecipientForm()
-    
+
     # Obtain all current email addresses
     emails = Email.objects.all()
-    
+
     # Print the page
     return render_to_response(
        'email/email_recipients.html',
@@ -175,7 +175,7 @@ def recipient_delete(request):
     # If this is a POST, then validate the form and save the data, otherise send them
     # to the main recipients page
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = DeleteRecipientForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('DeleteRecipientForm',form))
@@ -254,7 +254,7 @@ def recipient_modify(request):
 
     # If this is a POST, then validate the form and save the data, otherise do nothing
     if request.method == 'POST':
-        
+
         # Check the form elements
         form = XEditableModifyForm(request.POST)
         logger.debug('Form submit (POST): %s, with result: %s' % ('XEditableModifyForm',form))
@@ -293,4 +293,4 @@ def recipient_modify(request):
     else:
         logger.error('%s: Invalid request: GET received but only POST accepted.' % ('email.recipient_modify'))
         messages.add_message(request, messages.ERROR, 'Invalid request.')
-        return HttpResponseRedirect('/admin/email_recipients')     
+        return HttpResponseRedirect('/admin/email_recipients')

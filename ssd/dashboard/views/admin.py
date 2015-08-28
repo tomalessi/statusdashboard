@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 @staff_member_required_ssd
 def main(request):
     """Main admin index view
- 
+
     """
 
     logger.debug('%s view being executed.' % 'admin.main')
@@ -55,7 +55,7 @@ def main(request):
 @staff_member_required_ssd
 def cache_status(request):
     """Display cache settings
- 
+
     """
 
     logger.debug('%s view being executed.' % 'admin.cache_status')
@@ -81,7 +81,7 @@ def cache_status(request):
         try:
             for c in settings.CACHES:
                 stats = get_cache(c)._cache.get_stats()
-  
+
                 for server_cache in stats:
                     server = server_cache[0]
                     current_stats = server_cache[1]
@@ -120,7 +120,7 @@ def cache_status(request):
 @staff_member_required_ssd
 def admin_config(request):
     """SSD Admin Configuration View
- 
+
     """
 
     logger.debug('%s view being executed.' % 'admin.admin_config')
@@ -135,7 +135,7 @@ def admin_config(request):
         if form.is_valid():
             # Obtain the cleaned data
             link_enabled = form.cleaned_data['link_enabled']
-        
+
             # There should only ever be one record in this table
             Config_Admin.objects.filter(id=Config_Admin.objects.values('id')[0]['id']).update(link_enabled=link_enabled)
 

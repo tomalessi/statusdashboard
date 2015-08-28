@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ def set_timezone(request):
         else:
             messages.add_message(request, messages.ERROR, 'Invalid request, cannot update timezone.')
 
-    # Not a POST 
+    # Not a POST
     else:
         messages.add_message(request, messages.ERROR, 'Invalid request, cannot update timezone.')
 

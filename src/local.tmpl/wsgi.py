@@ -1,5 +1,5 @@
 #
-# Copyright 2013 - Tom Alessi
+# Copyright 2015 - Tom Alessi
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ application = get_wsgi_application()
 # application = HelloWorldApplication(application)
 
 # Add the SSD project app path to the system path
-# This is the directory that contains manage.py and the top 
+# This is the directory that contains manage.py and the top
 # level ssd directory
 path = '$__app_dir__$'
 if path not in sys.path:
